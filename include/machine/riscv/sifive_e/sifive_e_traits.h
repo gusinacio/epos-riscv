@@ -20,29 +20,29 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     static const unsigned int BOOT_LENGTH_MAX   = NOT_USED;
 
     // Physical Memory
-    static const unsigned int MEM_BASE          = XXXXXXXXXX;
-    static const unsigned int VECTOR_TABLE      = XXXXXXXXXX;
-    static const unsigned int PAGE_TABLES       = XXXXXXXXXX;
-    static const unsigned int MEM_TOP           = XXXXXXXXXX;
-    static const unsigned int BOOT_STACK        = XXXXXXXXXX;
+    static const unsigned int MEM_BASE          = 0x80000000; // sao usadas
+    static const unsigned int VECTOR_TABLE      = 0x10001000; // not used - realocar
+    static const unsigned int PAGE_TABLES       = 0x89000000; // tablea de paginas
+    static const unsigned int MEM_TOP           = 0x88000000; // + 128mb
+    static const unsigned int BOOT_STACK        = 0x88000000; // stack durante boot
 
     // Logical Memory Map
     static const unsigned int BOOT              = NOT_USED;
     static const unsigned int SETUP             = NOT_USED;
     static const unsigned int INIT              = NOT_USED;
 
-    static const unsigned int APP_LOW           = XXXXXXXXXX;
-    static const unsigned int APP_CODE          = XXXXXXXXXX;
-    static const unsigned int APP_DATA          = XXXXXXXXXX;
-    static const unsigned int APP_HIGH          = XXXXXXXXXX;
+    static const unsigned int APP_LOW           = 0x80000000; // endereco de codigo
+    static const unsigned int APP_CODE          = 0x80000000; // endereco de codigo
+    static const unsigned int APP_DATA          = 0x80000000; // dados
+    static const unsigned int APP_HIGH          = 0x88000000; //128mb
 
-    static const unsigned int PHY_MEM           = XXXXXXXXXX;
-    static const unsigned int IO_BASE           = XXXXXXXXXX;
-    static const unsigned int IO_TOP            = XXXXXXXXXX;
+    static const unsigned int PHY_MEM           = 0x80000000;
+    static const unsigned int IO_BASE           = 0x10010000; // mmio 
+    static const unsigned int IO_TOP            = 0x10011000; // 
 
     static const unsigned int SYS               = IO_TOP;
-    static const unsigned int SYS_CODE          = XXXXXXXXXX;
-    static const unsigned int SYS_DATA          = XXXXXXXXXX;
+    static const unsigned int SYS_CODE          = 0x80000000;
+    static const unsigned int SYS_DATA          = 0x80000000;
 
     // Default Sizes and Quantities
     static const unsigned int STACK_SIZE        = 16 * 1024;
@@ -50,16 +50,17 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     static const unsigned int MAX_THREADS       = 16;
 
     // PLL clocks
-    static const unsigned int IO_PLL_CLOCK      = XXXXXXXXXX;
-    static const unsigned int TIMER_CLOCK       = XXXXXXXXXX;
+    static const unsigned int IO_PLL_CLOCK      = 0x3000000;     // clock uart
+    static const unsigned int TIMER_CLOCK       = 0x0200bff8;    // frequencia timer
+
 };
 
 template <> struct Traits<IC>: public Traits<Machine_Common>
 {
     static const bool debugged = hysterically_debugged;
 
-    static const unsigned int IRQS = XXX;
-    static const unsigned int INTS = XXX;
+    static const unsigned int IRQS = 1;
+    static const unsigned int INTS = 1;
 };
 
 template <> struct Traits<Timer>: public Traits<Machine_Common>
@@ -78,7 +79,7 @@ template <> struct Traits<UART>: public Traits<Machine_Common>
 {
     static const unsigned int UNITS = 2;
 
-    static const unsigned int CLOCK_DIVISOR = XXX;
+    static const unsigned int CLOCK_DIVISOR = 16;
     static const unsigned int CLOCK = Traits<Machine>::IO_PLL_CLOCK/CLOCK_DIVISOR;
 
     static const unsigned int DEF_UNIT = 1;
