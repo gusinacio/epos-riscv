@@ -5,6 +5,10 @@
         "complex": "cpp",
         "numeric": "cpp",
         "limits": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "bitset": "cpp",
+        "random": "cpp",
+        "future": "cpp",
+        "optional": "cpp"
     }
 }

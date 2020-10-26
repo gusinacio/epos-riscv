@@ -10,112 +10,132 @@
 
 __BEGIN_SYS
 
-class NS16550A: public UART_Common
+class NS16550A : public UART_Common
 {
-    // This is a hardware object.
-    // Use with something like "new (Memory_Map::UARTx_BASE) PL011".
-
 private:
     typedef CPU::Reg8 Reg8;
     typedef CPU::Reg32 Reg32;
 
-    static const unsigned int unit = Traits<UART>::CLOCK;
+    static const unsigned int UNITS = Traits<UART>::UNITS;
+    static const unsigned int CLOCK = Traits<UART>::CLOCK / 16;
 
 public:
-    // Registers offsets from BASE (i.e. this)
-    enum {
-        /* UART Registers */
-        UART_REG_TXFIFO = 0,
-        UART_REG_RXFIFO = 1,
-        UART_REG_TXCTRL = 2,
-        UART_REG_RXCTRL = 3,
-        UART_REG_IE     = 4,
-        UART_REG_IP     = 5,
-        UART_REG_DIV    = 6,
-
-        /* TXCTRL register */
-        UART_TXEN       = 1,
-        UART_TXSTOP     = 2,
-
-        /* RXCTRL register */
-        UART_RXEN       = 1,
-
-        /* IP register */
-        UART_IP_TXWM    = 1,
-        UART_IP_RXWM    = 2
+    // Register Addresses (relative to base I/O port)
+    typedef Reg8 Address;
+    enum
+    {
+        THR = 0, // Transmit Holding	W,   DLAB = 0
+        RBR = 0, // Receive Buffer 	R,   DLAB = 0
+        IER = 1, // Interrupt Enable	R/W, DLAB = 0 [0=DR,1=THRE,2=LI,3=MO]
+        FCR = 2, // FIFO Control	W   [0=EN,1=RC,2=XC,3=RDY,67=TRG]
+        IIR = 2, // Interrupt Id	R   [0=PEN,12=ID,3=FIFOTO,67=1]
+        LCR = 3, // Line Control	R/W [01=DL,2=SB,345=P,6=BRK,7=DLAB]
+        MCR = 4, // Modem Control	R/W [0=DTR,1=RTS,2=OUT1,3=OUT2,4=LB]
+        LSR = 5, // Line Status		R/W [0=DR,1=OE,2=PE,3=FE,4=BI,5=THRE,
+                 //			     6=TEMT,7=FIFOE]
+        MSR = 6, // Modem Status	R/W [0=CTS,1=DSR,2=RI,3=DCD,4=LBCTS,
+                 // 			     5=LBDSR,6=LBRI,7=LBDCD]
+        SCR = 7, // Scratch 		R/W
+        DLL = 0, // Divisor Latch LSB	R/W, DLAB = 1
+        DLH = 1  // Divisor Latch MSB	R/W, DLAB = 1
     };
 
 public:
-    void config(unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits) {
-        Reg32 lcrh = data_bits == 8 ? WLEN8 : data_bits == 7 ? WLEN7 : data_bits = 6 ? WLEN6 : WLEN5; // config data bits
-        lcrh |= FEN; // always use FIFO
-        lcrh |= stop_bits == 2 ? STP2 : 0; // config stop bits
-        lcrh |= (parity == UART_Common::EVEN) ? (EPS | PEN) : (parity == UART_Common::ODD) ? PEN : 0; // config and enable even/odd parity
+    void config(unsigned int brate, unsigned int dbits, unsigned int par, unsigned int sbits)
+    {
+        // Disable all interrupts
+        uart(IER) = 0;
 
-        uart(UCR) &= ~UEN;                       // Disable UART for configuration
-        uart(ICR) = ~0;                          // Clear all interrupts
-        uart(UIM) = UIMALL;                      // Disable all interrupts
-        Reg32 br = CLOCK / (baud_rate / 300);   // Factor by the minimum BR to preserve meaningful bits of FBRD
-        uart(IBRD) = br / 300;                   // IBRD = int(CLOCK / baud_rate)
-        uart(FBRD) = br / 1000;                  // FBRD = int(0.1267 * 64 + 0.5) = 8
-        uart(LCRH) = lcrh;                       // Write the serial parameters configuration
-        uart(UIM) = UIMTX | UIMRX;               // Mask TX and RX interrupts for polling operation
-        uart(UCR) |= UEN | TXE | RXE;            // Enable UART
+        // Set clock divisor
+        unsigned int div = CLOCK / brate;
+        dlab(true);
+        uart(DLL) = div;
+        uart(DLH) = div >> 8;
+        dlab(false);
 
+        // Set data word length (5, 6, 7 or 8)
+        Reg8 lcr = dbits - 5;
 
-        uint32_t uart_freq = getauxval(UART0_CLOCK_FREQ);
-        uint32_t divisor = uart_freq / (16 * baud_rate);
-        uart[UART_LCR] = UART_LCR_DLAB;
-        uart[UART_DLL] = divisor & 0xff;
-        uart[UART_DLM] = (divisor >> 8) & 0xff;
-        uart[UART_LCR] = UART_LCR_PODD | UART_LCR_8BIT;
+        // Set parity (0 [no], 1 [odd], 2 [even])
+        if (par)
+        {
+            lcr |= 1 << 3;
+            lcr |= (par - 1) << 4;
+        }
+
+        // Set stop-bits (1, 2 or 3 [1.5])
+        lcr |= (sbits > 1) ? (1 << 2) : 0;
+
+        uart(LCR) = lcr;
+
+        // Enables Tx and Rx FIFOs, clear them, set trigger to 14 bytes
+        uart(FCR) = 0xc7;
+
+        // Set DTR, RTS and OUT2 of MCR
+        uart(MCR) = uart(MCR) | 0x0b;
     }
 
-    void config(unsigned int * baud_rate, unsigned int * data_bits, unsigned int * parity, unsigned int * stop_bits) {
-        Reg32 lcrh = uart(LCRH);
-        *data_bits = 5 + (lcrh & WLEN8);
-        *parity = (lcrh & PEN) ? (1 + (lcrh & EPS)) : 0;
-        *baud_rate = (CLOCK * 300) / (uart(FBRD) * 1000 + uart(IBRD) * 300);
-        *stop_bits = (uart(LCRH) & STP2) ? 2 : 1;
+    void config(unsigned int *brate, unsigned int *dbits, unsigned int *par, unsigned int *sbits)
+    {
+        // Get clock divisor
+        dlab(true);
+        *brate = CLOCK * ((uart(DLH) << 8) | uart(DLL));
+        dlab(false);
+
+        Reg8 lcr = uart(LCR);
+
+        // Get data word length (LCR bits 0 and 1)
+        *dbits = (lcr & 0x03) + 5;
+
+        // Get parity (LCR bits 3 [enable] and 4 [odd/even])
+        *par = (lcr & 0x08) ? ((lcr & 0x10) ? 2 : 1) : 0;
+
+        // Get stop-bits  (LCR bit 2 [0 - >1, 1&D5 -> 1.5, 1&!D5 -> 2)
+        *sbits = (lcr & 0x04) ? ((*dbits == 5) ? 3 : 2) : 1;
     }
 
-    Reg8 rxd() { return uart(DR); }
-    void txd(Reg8 c) { uart(DR) = c; }
+    Reg8 rxd() { return uart(RBR); }
+    void txd(Reg8 c) { uart(THR) = c; }
 
-
-    bool rxd_ok() { return !(uart(FR) & RXFE); }
-    bool txd_ok() { return !(uart(FR) & TXFF); }
-
-    bool rxd_full() { return (uart(FR) & RXFF); }
-    bool txd_empty() { return (uart(FR) & TXFE) && !(uart(FR) & BUSY); }
-
-    bool busy() { return (uart(FR) & BUSY); }
-
-    void enable() { uart(UCR) |= UEN | TXE | RXE; }
-    void disable() { uart(UCR) &= ~UEN; }
-
-    void int_enable(bool receive = true, bool transmit = true, bool line = true, bool modem = true) {
-        uart(UIM) &= ~((receive ? UIMRX : 0) | (transmit ? UIMTX : 0));
+    void int_enable(bool receive = true, bool send = true, bool line = true, bool modem = true)
+    {
+        uart(IER) = receive | (send << 1) | (line << 2) | (modem << 3);
     }
-    void int_disable(bool receive = true, bool transmit = true, bool line = true, bool modem = true) {
-        uart(UCR) |= (receive ? UIMRX : 0) | (transmit ? UIMTX : 0);
+    void int_disable(bool receive = true, bool send = true, bool line = true, bool modem = true)
+    {
+        uart(IER) = uart(IER) & ~(receive | (send << 1) | (line << 2) | (modem << 3));
     }
 
-    void reset() {
+    void reset()
+    {
+        // Reconfiguring the UART implicitly resets it
         unsigned int b, db, p, sb;
         config(&b, &db, &p, &sb);
         config(b, db, p, sb);
     }
 
-    void loopback(bool flag) {
-        if(flag)
-            uart(UCR) |= int(LBE);
-        else
-            uart(UCR) &= ~LBE;
-    }
+    void loopback(bool flag) { uart(MCR) = uart(MCR) | (flag << 4); }
+
+    bool rxd_ok() { return uart(LSR) & (1 << 0); }
+    bool txd_ok() { return uart(LSR) & (1 << 5); }
+
+    void dtr() { uart(MCR) = uart(MCR) | (1 << 0); }
+    void rts() { uart(MCR) = uart(MCR) | (1 << 1); }
+    bool cts() { return uart(MSR) & (1 << 0); }
+    bool dsr() { return uart(MSR) & (1 << 1); }
+    bool dcd() { return uart(MSR) & (1 << 3); }
+    bool ri() { return uart(MSR) & (1 << 2); }
+
+    bool overrun_error() { return uart(LSR) & (1 << 1); }
+    bool parity_error() { return uart(LSR) & (1 << 2); }
+    bool framing_error() { return uart(LSR) & (1 << 3); }
 
 private:
-    volatile Reg32 & uart(unsigned int o) { return reinterpret_cast<volatile Reg32 *>(this)[o / sizeof(Reg32)]; }
+
+    void dlab(bool f) { uart(LCR) = (uart(LCR) & 0x7f) | (f << 7); }
+
+private:
+    volatile Reg32 &uart(unsigned int o) { return reinterpret_cast<volatile Reg32 *>(this)[o / sizeof(Reg32)]; }
 };
 
 __END_SYS
