@@ -31,7 +31,7 @@ public:
     typedef Reg32 Flags;
     enum {
         //implement
-        FLAG_Z = 1 << 30
+        FLAG_Z = 1 << 30,
     };
 
     // CPU Context
@@ -70,12 +70,13 @@ public:
 public:
     // Register access
     static Reg32 sp() {
-        //implement
-        return 0;
+        Reg32 value;
+        ASM("lw %0, sp" : "=r"(value) :);
+        return value;
     }
 
     static void sp(const Reg32 & sp) {
-        //implement
+        ASM("sw sp, %0" : : "r"(sp) : "sp");
     }
 
     static Reg32 fr() {
@@ -88,8 +89,9 @@ public:
     }
 
     static Log_Addr ip() {
-        //implement
-        return 0;
+        Reg32 value;
+        ASM("lw %0, pc" : "=r"(value) :);
+        return value;
     }
 
     static Reg32 pdp() { return 0; }

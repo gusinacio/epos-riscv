@@ -11,7 +11,7 @@ template<> struct Traits<CPU>: public Traits<Build>
     enum {LITTLE, BIG};
     static const unsigned int ENDIANESS         = LITTLE;
     static const unsigned int WORD_SIZE         = 64;
-    static const unsigned int CLOCK             = XXXXXXX; // CPU CLOCK
+    static const unsigned int CLOCK             = 1000000; // CPU CLOCK
     static const bool unaligned_memory_access   = false;
 };
 
