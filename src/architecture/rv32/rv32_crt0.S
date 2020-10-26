@@ -48,16 +48,16 @@ _start:
         # implement
 
         # Call _init
-        # call _init
-        mret
+        call _init
+        # mret
 
+3:
+        wfi
+	j 3b
         # Call main
         .align  4
         .globl  __epos_app_entry
         .type   __epos_app_entry, function
-3:
-        wfi
-	j 4b
 __epos_app_entry:
         call      main
         lw        a0, 0(sp)         #save main's return value to be used by exit()
