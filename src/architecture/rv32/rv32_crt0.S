@@ -53,7 +53,7 @@ _start:
         #mret
 
 3:
-        #wfi
+        wfi
 	j 3b
 
         # Call main

@@ -15,34 +15,36 @@ private:
     static const unsigned int UNITS = Traits<UART>::UNITS;
 
 public:
-    UART_Engine(unsigned int unit, unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits): _unit(unit), _ns1655a(new(reinterpret_cast<void *>(Memory_Map::UART_BASE + 0x1000 * unit)) NS16550A) {
+    UART_Engine(unsigned int unit, unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits): _unit(unit), _ns16550a(new(reinterpret_cast<void *>(Memory_Map::UART_BASE)) NS16550A) {
         assert(unit < UNITS);
+        _unit = unit;
+        _ns16550a = new(reinterpret_cast<void *>(Memory_Map::UART_BASE)) NS16550A;
         config(baud_rate, data_bits, parity, stop_bits);
     }
 
     void config(unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits) {
-        _ns1655a->config(baud_rate, data_bits, parity, stop_bits);
+        _ns16550a->config(baud_rate, data_bits, parity, stop_bits);
     }
 
     void config(unsigned int * baud_rate, unsigned int * data_bits, unsigned int * parity, unsigned int * stop_bits) {
-        _ns1655a->config(baud_rate, data_bits, parity, stop_bits);
+        _ns16550a->config(baud_rate, data_bits, parity, stop_bits);
     }
 
-    char rxd() { return _ns1655a->rxd(); }
-    void txd(char c) { return _ns1655a->txd(c); }
+    char rxd() { return _ns16550a->rxd(); }
+    void txd(char c) { return _ns16550a->txd(c); }
 
-    bool rxd_ok() { return _ns1655a->rxd_ok(); }
-    bool txd_ok() { return _ns1655a->txd_ok(); }
+    bool rxd_ok() { return _ns16550a->rxd_ok(); }
+    bool txd_ok() { return _ns16550a->txd_ok(); }
 
     void int_enable(bool receive = true, bool transmit = true, bool line = true, bool modem = true) {
-        _ns1655a->int_enable(receive, transmit, line, modem);
+        _ns16550a->int_enable(receive, transmit, line, modem);
     }
     void int_disable(bool receive = true, bool transmit = true, bool line = true, bool modem = true) {
-        _ns1655a->int_disable(receive, transmit, line, modem);
+        _ns16550a->int_disable(receive, transmit, line, modem);
     }
 
-    void reset() { _ns1655a->reset(); }
-    void loopback(bool flag) { _ns1655a->loopback(flag); }
+    void reset() { _ns16550a->reset(); }
+    void loopback(bool flag) { _ns16550a->loopback(flag); }
 
     void power(const Power_Mode & mode) {}
 
@@ -50,7 +52,7 @@ public:
 
 private:
     unsigned int _unit;
-    NS16550A * _ns1655a;
+    NS16550A * _ns16550a;
 };
 
 __END_SYS

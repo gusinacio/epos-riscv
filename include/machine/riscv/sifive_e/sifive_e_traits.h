@@ -50,7 +50,7 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     static const unsigned int MAX_THREADS       = 16;
 
     // PLL clocks
-    static const unsigned int IO_PLL_CLOCK      = 32000000;     // clock uart
+    static const unsigned int IO_PLL_CLOCK      = 1843200;     // clock uart
     static const unsigned int TIMER_CLOCK       = 0x0200bff8;    // frequencia timer
 
 };
