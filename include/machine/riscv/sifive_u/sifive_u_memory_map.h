@@ -13,14 +13,14 @@ struct Memory_Map
 {
     // Physical Memory
     enum {
-        UART_BASE                   = XXXXXXX, // UART
-        TIMER_BASE                  = XXXXXXX,
-        GPIOA_BASE                  = XXXXXXX,
-        RTC_BASE                    = XXXXXXX,
+        UART_BASE                   = 0x10010000, // UART
+        TIMER_BASE                  = 0x02004000,
+        GPIOA_BASE                  = 0x10001000,
+        RTC_BASE                    = 0x101000,
 
-        CLINT_BASE                  = XXXXXXX,
-        PLIIC_CPU_BASE              = XXXXXXX,
-        PRIVATE_TIMER_BASE          = XXXXXXX
+        CLINT_BASE                  = 0x02000000,
+        PLIIC_CPU_BASE              = 0x0C000000,
+        PRIVATE_TIMER_BASE          = 0x2000000
     };
 
     // Physical Memory

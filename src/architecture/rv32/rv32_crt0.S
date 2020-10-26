@@ -2,7 +2,7 @@
 
         .file "rv32_crt0.S"
 
-        # Entry point called by SETUP for processors
+        .option norvc
         .section .text
         .align  4
         .global _start
@@ -13,28 +13,28 @@ _start:
         bnez t0, 2f
         csrw satp, zero
 
+        csrr t0, mhartid # reading CSR mhartid
+	bnez t0, 2f
+
         .option push
         .option norelax
-
-        la gp, __global_pointer$
+        
+	la  gp, __global_pointer$
 
         .option pop
 
-        # Load _bss limits to a0 and a1 respectively
         la a0, __bss_start
         la a1, _end
-
-        bgeu a0, a1, 2f  # branch if a0 >= a1
+	bgeu a0, a1, 2f
 1:
-        # Set all bytes in the BSS section to zero.
-        sw   zero, (a0)
-        addi a0, a0, 4
-        bltu a0, a1, 1b  # branch if a0 < a1
+        sw	zero, (a0)
+	addi	a0, a0, 4
+	bltu	a0, a1, 1b
 
 2:
-        # Temporary stack(s) for INIT are created and configure by SETUP
-        la sp, __boot_stack__
-
+        # Set all bytes in the BSS section to zero.
+        la   sp, __boot_stack__
+        
         li t0, (0b11 << 11) | (1 << 7) | (1 << 3)  # mask for machine mode (interruptions?)
         csrw mstatus, t0
 
@@ -45,22 +45,21 @@ _start:
         csrw mtvec, t2
 
         la ra, 3f
+        # implement
 
         # Call _init
-        #call      _init
+        # call _init
         mret
 
         # Call main
         .align  4
         .globl  __epos_app_entry
         .type   __epos_app_entry, function
-
 3:
         wfi
-        j 3b
-
+	j 4b
 __epos_app_entry:
         call      main
-        lw        a0, 0(sp)         # save main's return value to be used by exit()
+        lw        a0, 0(sp)         #save main's return value to be used by exit()
         call      _fini
         call      _exit

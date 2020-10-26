@@ -22,7 +22,7 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     // Physical Memory
     static const unsigned int MEM_BASE          = 0x80000000; // sao usadas
     static const unsigned int VECTOR_TABLE      = 0x10001000; // not used - realocar
-    static const unsigned int PAGE_TABLES       = 0x89000000; // tablea de paginas
+    static const unsigned int PAGE_TABLES       = 0x800030d0; // tablea de paginas
     static const unsigned int MEM_TOP           = 0x88000000; // + 128mb
     static const unsigned int BOOT_STACK        = 0x88000000; // stack durante boot
 
@@ -50,7 +50,7 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     static const unsigned int MAX_THREADS       = 16;
 
     // PLL clocks
-    static const unsigned int IO_PLL_CLOCK      = 0x3000000;     // clock uart
+    static const unsigned int IO_PLL_CLOCK      = 32000000;     // clock uart
     static const unsigned int TIMER_CLOCK       = 0x0200bff8;    // frequencia timer
 
 };
