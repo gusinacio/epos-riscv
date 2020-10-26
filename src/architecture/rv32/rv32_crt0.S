@@ -11,7 +11,7 @@ _start:
         # Reading mhhartid
         csrr t0, mhartid
         bnez t0, 2f
-        csrw satp, zero # Desabilita mmu?
+        csrw satp, zero
 
         .option push
         .option norelax
