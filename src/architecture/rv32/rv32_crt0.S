@@ -7,6 +7,7 @@
         .align  4
         .global _start
         .type   _start, function
+
 _start:
         # Reading mhhartid
         csrr t0, mhartid
@@ -44,20 +45,21 @@ _start:
         la t2, _vector_table
         csrw mtvec, t2
 
-        la ra, 3f
+        #la ra, 3f
         # implement
 
         # Call _init
-        # call _init
-        mret
+        call _init
+        #mret
+
+3:
+        #wfi
+	j 3b
 
         # Call main
         .align  4
         .globl  __epos_app_entry
         .type   __epos_app_entry, function
-3:
-        wfi
-	j 4b
 __epos_app_entry:
         call      main
         lw        a0, 0(sp)         #save main's return value to be used by exit()

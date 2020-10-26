@@ -12,9 +12,9 @@ volatile unsigned int Scheduling_Criteria::Variable_Queue::_next_queue;
 // The following Scheduling Criteria depend on Alarm, which is not available at scheduler.h
 namespace Scheduling_Criteria {
     template <typename ... Tn>
-    FCFS::FCFS(int p, Tn & ... an): Priority((p == IDLE) ? IDLE : Alarm::elapsed()) {}
+    FCFS::FCFS(int p, Tn & ... an): Priority((p == IDLE) ? IDLE : NORMAL) {}
 
-    FCFS::FCFS(int p): Priority((p == IDLE) ? IDLE : Alarm::elapsed()) {}
+    FCFS::FCFS(int p): Priority((p == IDLE) ? IDLE : NORMAL) {}
 
     EDF::EDF(const Microsecond & d, const Microsecond & p, const Microsecond & c, int): RT_Common(Alarm::ticks(d), Alarm::ticks(d), p, c) {}
 
