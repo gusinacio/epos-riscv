@@ -1,1 +1,21 @@
 *.o
+
+# Exclude application binaries
+app/
+
+!app/*/*.cc
+!app/*/*.h
+!app/*/makefile
+
+# VSCODE files
+.vscode/
+
+# Config files
+*.conf
+
+# Image files
+img/*
+
+# EPOS Config
+tools/eposcfg/eposcfg
+tools/eposmkbi/eposmkbi
