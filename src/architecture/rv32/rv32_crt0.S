@@ -12,56 +12,55 @@ _start:
         # Reading mhhartid
         csrr t0, mhartid
         bnez t0, 2f
-        csrw satp, zero
 
-        csrr t0, mhartid # reading CSR mhartid
-	bnez t0, 2f
+        # Assures satp register initialized to zero
+        csrw satp, zero
 
         .option push
         .option norelax
-        
+
+        # Initialize global pointer
 	la  gp, __global_pointer$
 
         .option pop
 
-        la a0, __bss_start
-        la a1, _end
-	bgeu a0, a1, 2f
+        # Gets the bss section limits
+        la     a0, __bss_start
+        la     a1, _end
+	bgeu   a0, a1, 2f
 1:
+        # Write zero to .bss section
         sw	zero, (a0)
 	addi	a0, a0, 4
 	bltu	a0, a1, 1b
 
 2:
-        # Set all bytes in the BSS section to zero.
+        # Initialize stack pointer for boot
         la   sp, __boot_stack__
-        
-        li t0, (0b11 << 11) | (1 << 7) | (1 << 3)  # mask for machine mode (interruptions?)
-        csrw mstatus, t0
 
-        la t1, _init
-        csrw mepc, t1
+        # Initialize mstatus in machine mode
+        #li t0, (0b11 << 11) | (1 << 7) | (1 << 3)
+        li     t0, (0b11 << 11)
+        csrw   mstatus, t0
 
-        la t2, _vector_table
-        csrw mtvec, t2
+        # Initialize mepc register
+        la     t1, _init
+        csrw   mepc, t1
 
-        #la ra, 3f
-        # implement
+        # Initialize mtvec register
+        la     t2, _vector_table
+        csrw   mtvec, t2
 
         # Call _init
         call _init
-        #mret
-
-3:
-        wfi
-	j 3b
 
         # Call main
         .align  4
         .globl  __epos_app_entry
         .type   __epos_app_entry, function
+
 __epos_app_entry:
         call      main
-        lw        a0, 0(sp)         #save main's return value to be used by exit()
+        lw        a0, 0(sp)         # save main's return value to be used by exit()
         call      _fini
         call      _exit
