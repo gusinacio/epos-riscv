@@ -32,6 +32,10 @@ public:
     enum {
         //implement
         FLAG_Z = 1 << 30,
+
+        SIFIVE_TEST_FAIL = 0x3333,
+	    SIFIVE_TEST_PASS = 0x5555,
+        SIFIVE_TEST_CTRL_ADDR = 0x100000,
     };
 
     // CPU Context
@@ -160,7 +164,11 @@ public:
 
     // Power modes
     static void halt() {
-        //implement
+        volatile Reg32 *test = (Reg32 *)(void *)(SIFIVE_TEST_CTRL_ADDR);
+        *test = SIFIVE_TEST_PASS;
+        while (1) {
+            asm volatile("");
+        }
     }
 
     //implement

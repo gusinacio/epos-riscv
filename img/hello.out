@@ -1,3 +1,4 @@
-QEMU 5.1.0 monitor - type 'help' for more information
-(qemu) QEMU: Terminated
-
+Hello Mundo injusto!
+The last thread has exited!
+Rebooting the machine ...
+Machine::reboot()
