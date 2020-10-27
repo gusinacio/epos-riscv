@@ -31,13 +31,18 @@ public:
     typedef Reg32 Flags;
     enum {
         //implement
+        FLAG_Z = 1 << 30,
+
+        SIFIVE_TEST_FAIL = 0x3333,
+	    SIFIVE_TEST_PASS = 0x5555,
+        SIFIVE_TEST_CTRL_ADDR = 0x100000,
     };
 
     // CPU Context
     class Context
     {
     public:
-        Context(const Log_Addr & entry, const Log_Addr & exit): reg_flags(FLAG_DEFAULTS), reg_ra(exit), reg_ip(entry) {}
+        Context(const Log_Addr & entry, const Log_Addr & exit): _reg_ra(exit), _reg_ip(entry), _zero(0) {}
 
         void save() volatile  __attribute__ ((naked));
         void load() const volatile;
@@ -50,10 +55,36 @@ public:
         }
 
     public:
-        Reg32 reg_flags;
-        Reg32 _general_use_reg0; //all registers that must be saved
-        Reg32 _reg_ra; // return address register
-        Reg32 _reg_ip; //instruction pointer
+        Reg32 _reg_ra; // return address
+        Reg32 _reg_x31;
+        Reg32 _reg_x30;
+        Reg32 _reg_x29;
+        Reg32 _reg_x28;
+        Reg32 _reg_x27;
+        Reg32 _reg_x26;
+        Reg32 _reg_x25;
+        Reg32 _reg_x24;
+        Reg32 _reg_x23;
+        Reg32 _reg_x22;
+        Reg32 _reg_x21;
+        Reg32 _reg_x20;
+        Reg32 _reg_x19;
+        Reg32 _reg_x18;
+        Reg32 _reg_x17;
+        Reg32 _reg_x16;
+        Reg32 _reg_x15;
+        Reg32 _reg_x14;
+        Reg32 _reg_x13;
+        Reg32 _reg_x12;
+        Reg32 _reg_x11;
+        Reg32 _reg_x10;
+        Reg32 _reg_x9;
+        Reg32 _reg_x8;
+        Reg32 _reg_x7;
+        Reg32 _reg_x6;
+        Reg32 _reg_x5; // general-purpose registers (x5-31)
+        Reg32 _reg_ip; // instruction pointer
+        Reg32 _zero;
     };
 
     
@@ -69,12 +100,13 @@ public:
 public:
     // Register access
     static Reg32 sp() {
-        //implement
-        return 0;
+        Reg32 value;
+        ASM("lw %0, sp" : "=r"(value) :);
+        return value;
     }
 
     static void sp(const Reg32 & sp) {
-        //implement
+        ASM("sw sp, %0" : : "r"(sp) : "sp");
     }
 
     static Reg32 fr() {
@@ -87,8 +119,9 @@ public:
     }
 
     static Log_Addr ip() {
-        //implement
-        return 0;
+        Reg32 value;
+        ASM("lw %0, pc" : "=r"(value) :);
+        return value;
     }
 
     static Reg32 pdp() { return 0; }
@@ -131,7 +164,11 @@ public:
 
     // Power modes
     static void halt() {
-        //implement
+        volatile Reg32 *test = (Reg32 *)(void *)(SIFIVE_TEST_CTRL_ADDR);
+        *test = SIFIVE_TEST_PASS;
+        while (1) {
+            asm volatile("");
+        }
     }
 
     //implement
@@ -172,14 +209,14 @@ public:
     static Context * init_stack(const Log_Addr & usp, Log_Addr sp, void (* exit)(), int (* entry)(Tn ...), Tn ... an) {
         sp -= sizeof(Context);
         Context * ctx = new(sp) Context(entry, exit);
-        init_stack_helper(&ctx->_general_use_reg0, an ...);
+        init_stack_helper(&ctx->_reg_x31, an ...);
         return ctx;
     }
     template<typename ... Tn>
     static Log_Addr init_user_stack(Log_Addr sp, void (* exit)(), Tn ... an) {
         sp -= sizeof(Context);
         Context * ctx = new(sp) Context(0, exit);
-        init_stack_helper(&ctx->_general_use_reg0, an ...);
+        init_stack_helper(&ctx->_reg_x31, an ...);
         return sp;
     }
 

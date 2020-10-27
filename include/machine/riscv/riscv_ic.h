@@ -34,8 +34,8 @@ public:
 
     // Interrupt IDS
     enum {
-        INT_SYS_TIMER   = XX,
-        INT_USER_TIMER0 = XX, // it could be 5, if we adopt supervisor execution mode
+        INT_SYS_TIMER   = 7,
+        INT_USER_TIMER0 = 5, // it could be 5, if we adopt supervisor execution mode
         INT_USER_TIMER1 = 0,
         INT_USER_TIMER2 = 0,
         INT_USER_TIMER3 = 0,
@@ -50,7 +50,7 @@ public:
         INT_USB0        = 0,
         INT_FIRST_HARD  = 0,
         INT_LAST_HARD   = 0,
-        INT_RESCHEDULER = XX
+        INT_RESCHEDULER = 0
     };
 
     // address

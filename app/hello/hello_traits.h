@@ -10,9 +10,9 @@ template<> struct Traits<Build>: public Traits_Tokens
 {
     // Basic configuration
     static const unsigned int MODE = LIBRARY;
-    static const unsigned int ARCHITECTURE = IA32;
-    static const unsigned int MACHINE = PC;
-    static const unsigned int MODEL = Legacy_PC;
+    static const unsigned int ARCHITECTURE = RV32;
+    static const unsigned int MACHINE = RISCV;
+    static const unsigned int MODEL = SiFive_E;
     static const unsigned int CPUS = 1;
     static const unsigned int NODES = 1; // (> 1 => NETWORKING)
     static const unsigned int EXPECTED_SIMULATION_TIME = 60; // s (0 => not simulated)
@@ -129,7 +129,7 @@ template<> struct Traits<Thread>: public Traits<Build>
     static const bool simulate_capacity = false;
     static const bool trace_idle = hysterically_debugged;
 
-    typedef Scheduling_Criteria::RR Criterion;
+    typedef Scheduling_Criteria::FCFS Criterion;
     static const unsigned int QUANTUM = 10000; // us
 };
 
@@ -146,6 +146,7 @@ template<> struct Traits<Synchronizer>: public Traits<Build>
 template<> struct Traits<Alarm>: public Traits<Build>
 {
     static const bool visible = hysterically_debugged;
+    static const bool enabled = false;
 };
 
 template<> struct Traits<SmartData>: public Traits<Build>
