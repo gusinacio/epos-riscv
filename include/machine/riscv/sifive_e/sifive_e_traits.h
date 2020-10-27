@@ -20,11 +20,11 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     static const unsigned int BOOT_LENGTH_MAX   = NOT_USED;
 
     // Physical Memory
-    static const unsigned int MEM_BASE          = 0x80000000; // sao usadas
-    static const unsigned int VECTOR_TABLE      = 0x80000000; // not used - realocar
-    static const unsigned int PAGE_TABLES       = 0x800030d0; // tablea de paginas
+    static const unsigned int MEM_BASE          = 0x80000000;
+    static const unsigned int VECTOR_TABLE      = 0x80000000; // not used
+    static const unsigned int PAGE_TABLES       = 0x800030d0; // not used
     static const unsigned int MEM_TOP           = 0x88000000; // + 128mb
-    static const unsigned int BOOT_STACK        = 0x87FFFFE0; // stack durante boot
+    static const unsigned int BOOT_STACK        = 0x88000000; // stack durante boot
 
     // Logical Memory Map
     static const unsigned int BOOT              = NOT_USED;
