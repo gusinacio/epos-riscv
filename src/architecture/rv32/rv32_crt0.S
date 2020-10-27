@@ -48,7 +48,7 @@ _start:
         csrw   mepc, t1
 
         # Initialize mtvec register
-        la     t2, _vector_table
+        la     t2, _int_entry
         csrw   mtvec, t2
 
         # Call _init
@@ -58,7 +58,6 @@ _start:
         .align  4
         .globl  __epos_app_entry
         .type   __epos_app_entry, function
-
 __epos_app_entry:
         call      main
         lw        a0, 0(sp)         # save main's return value to be used by exit()
