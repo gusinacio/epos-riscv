@@ -94,6 +94,19 @@ namespace Scheduling_Criteria
         FCFS(int p = NORMAL, Tn & ... an);
     };
 
+    // Shortest Job First (SJF)
+    class SJF: public Priority
+    {
+    public:
+        static const bool timed = false;
+        static const bool dynamic = false;
+        static const bool preemptive = false;
+
+    public:
+        template <typename ... Tn>
+        SJF(unsigned int time = 0, Tn & ... an): Priority(time) {};
+    };
+
 
     // Multicore Algorithms
     class Variable_Queue
