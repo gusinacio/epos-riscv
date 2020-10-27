@@ -54,8 +54,8 @@ public:
         // Set clock divisor
         Reg32 div = CLOCK / brate;
         dlab(true);
-        uart(DLL) = div && 0xff;
-        uart(DLM) = (div >> 8) && 0xff;
+        uart(DLL) = div;
+        uart(DLM) = div >> 8;
         dlab(false);
 
         // Set data word length (5, 6, 7 or 8)
@@ -72,7 +72,7 @@ public:
         lcr |= (sbits > 1) ? (1 << 2) : 0;
 
         uart(LCR) = lcr;
-        // uart(LCR) = LCR_PODD | LCR_8BIT;
+        
         // Enables Tx and Rx FIFOs, clear them, set trigger to 14 bytes
         uart(FCR) = 0xc7;
 

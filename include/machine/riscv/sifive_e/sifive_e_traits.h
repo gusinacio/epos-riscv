@@ -21,10 +21,10 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
 
     // Physical Memory
     static const unsigned int MEM_BASE          = 0x80000000; // sao usadas
-    static const unsigned int VECTOR_TABLE      = 0x10001000; // not used - realocar
+    static const unsigned int VECTOR_TABLE      = 0x80000000; // not used - realocar
     static const unsigned int PAGE_TABLES       = 0x800030d0; // tablea de paginas
     static const unsigned int MEM_TOP           = 0x88000000; // + 128mb
-    static const unsigned int BOOT_STACK        = 0x88000000; // stack durante boot
+    static const unsigned int BOOT_STACK        = 0x87FFFFE0; // stack durante boot
 
     // Logical Memory Map
     static const unsigned int BOOT              = NOT_USED;
@@ -40,7 +40,7 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     static const unsigned int IO_BASE           = 0x10010000; // mmio 
     static const unsigned int IO_TOP            = 0x10011000; // 
 
-    static const unsigned int SYS               = IO_TOP;
+    static const unsigned int SYS               = 0x80000000;
     static const unsigned int SYS_CODE          = 0x80000000;
     static const unsigned int SYS_DATA          = 0x80000000;
 
@@ -60,7 +60,7 @@ template <> struct Traits<IC>: public Traits<Machine_Common>
     static const bool debugged = hysterically_debugged;
 
     static const unsigned int IRQS = 1;
-    static const unsigned int INTS = 1;
+    static const unsigned int INTS = 32;
 };
 
 template <> struct Traits<Timer>: public Traits<Machine_Common>
@@ -97,6 +97,11 @@ template<> struct Traits<Serial_Display>: public Traits<Machine_Common>
     static const int COLUMNS = 80;
     static const int LINES = 24;
     static const int TAB_SIZE = 8;
+};
+
+template<> struct Traits<Scratchpad>: public Traits<Machine_Common>
+{
+    static const bool enabled = false;
 };
 
 __END_SYS
