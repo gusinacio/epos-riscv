@@ -49,7 +49,36 @@ public:
 
         friend Debug & operator<<(Debug & db, const Context & c) {
             db << hex
-               << "{REG NAME" << 0 //registers
+               << "{ra="  << c._reg_ra
+               << ",x5="  << c._reg_x5
+               << ",x6="  << c._reg_x6
+               << ",x7="  << c._reg_x7
+               << ",x8="  << c._reg_x8
+               << ",x9="  << c._reg_x9
+               << ",x10="  << c._reg_x10
+               << ",x11="  << c._reg_x11
+               << ",x12="  << c._reg_x12
+               << ",x13="  << c._reg_x13
+               << ",x14=" << c._reg_x14
+               << ",x15=" << c._reg_x15
+               << ",x16=" << c._reg_x16
+               << ",x17="  << c._reg_x17
+               << ",x18="  << c._reg_x18
+               << ",x19="  << c._reg_x19
+               << ",x20="  << c._reg_x20
+               << ",x21="  << c._reg_x21
+               << ",x22="  << c._reg_x22
+               << ",x23="  << c._reg_x23
+               << ",x24="  << c._reg_x24
+               << ",x25="  << c._reg_x25
+               << ",x26=" << c._reg_x26
+               << ",x27=" << c._reg_x27
+               << ",x28=" << c._reg_x28
+               << ",x29=" << c._reg_x29
+               << ",x30=" << c._reg_x30
+               << ",x31=" << c._reg_x31
+               << ",sp="  << &c
+               << ",pc="  << c._reg_ip
                << "}" << dec;
             return db;
         }

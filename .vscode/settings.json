@@ -10,6 +10,16 @@
         "random": "cpp",
         "future": "cpp",
         "optional": "cpp",
-        "atomic": "cpp"
+        "atomic": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "ratio": "cpp",
+        "system_error": "cpp",
+        "array": "cpp",
+        "functional": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "variant": "cpp"
     }
 }

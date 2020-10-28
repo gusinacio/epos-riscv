@@ -9,6 +9,10 @@
         .type   _start, function
 
 _start:
+        # Initialize mtvec register
+        la     t2, _int_entry
+        csrw   mtvec, t2
+        
         # Reading mhhartid
         csrr t0, mhartid
         bnez t0, 2f
@@ -46,10 +50,6 @@ _start:
         # Initialize mepc register
         la     t1, _init
         csrw   mepc, t1
-
-        # Initialize mtvec register
-        la     t2, _int_entry
-        csrw   mtvec, t2
 
         # Call _init
         call _init
