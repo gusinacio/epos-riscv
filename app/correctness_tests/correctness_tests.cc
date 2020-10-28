@@ -123,7 +123,7 @@ int main()
     cout << "- Registradores" << endl;
     print_registers();
 
-    cout << "- Trap Vector (Não está correto)" << endl;
+    cout << "- Trap Vector" << endl;
     print_mtvec();
 
     cout << endl;
