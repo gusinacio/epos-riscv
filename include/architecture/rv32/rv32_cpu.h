@@ -42,7 +42,11 @@ public:
     class Context
     {
     public:
-        Context(const Log_Addr & entry, const Log_Addr & exit): _reg_ra(exit), _reg_ip(entry) {}
+        Context(const Log_Addr & entry, const Log_Addr & exit): _reg_ra(exit), _reg_x5(0), _reg_x6(0),
+        _reg_x7(0), _reg_x8(0), _reg_x9(0), _reg_x10(0), _reg_x11(0), _reg_x12(0), _reg_x13(0), _reg_x14(0),
+        _reg_x15(0), _reg_x16(0), _reg_x17(0), _reg_x18(0), _reg_x19(0), _reg_x20(0), _reg_x21(0), _reg_x22(0),
+        _reg_x23(0), _reg_x24(0), _reg_x25(0), _reg_x26(0), _reg_x27(0), _reg_x28(0), _reg_x29(0), _reg_x30(0),
+        _reg_x31(0), _reg_ip(entry) {}
 
         void save() volatile  __attribute__ ((naked));
         void load() const volatile;
