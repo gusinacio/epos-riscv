@@ -34,66 +34,10 @@ void print_satp()
     cout << "satp=" << bin << satp << endl;
 }
 
-void print_registers()
-{
-    register unsigned int sp asm("sp");
-    register unsigned int gp asm("gp");
-    register unsigned int x5 asm("x5");
-    register unsigned int x6 asm("x6");
-    register unsigned int x7 asm("x7");
-    register unsigned int x8 asm("x8");
-    register unsigned int x9 asm("x9");
-    register unsigned int x10 asm("x10");
-    register unsigned int x11 asm("x11");
-    register unsigned int x12 asm("x12");
-    register unsigned int x13 asm("x13");
-    register unsigned int x14 asm("x14");
-    register unsigned int x15 asm("x15");
-    register unsigned int x16 asm("x16");
-    register unsigned int x17 asm("x17");
-    register unsigned int x18 asm("x18");
-    register unsigned int x19 asm("x19");
-    register unsigned int x20 asm("x20");
-    register unsigned int x21 asm("x21");
-    register unsigned int x22 asm("x22");
-    register unsigned int x23 asm("x23");
-    register unsigned int x24 asm("x24");
-    register unsigned int x25 asm("x25");
-    register unsigned int x26 asm("x26");
-    register unsigned int x27 asm("x27");
-    register unsigned int x28 asm("x28");
-    register unsigned int x29 asm("x29");
-    register unsigned int x30 asm("x30");
-    register unsigned int x31 asm("x31");
-    cout << "registers { sp=" << sp
-         << ",gp=" << gp
-         << ",x5=" << x5
-         << ",x6=" << x6
-         << ",x7=" << x7
-         << ",x8=" << x8
-         << ",x9=" << x9
-         << ",x10=" << x10
-         << ",x11=" << x11
-         << ",x12=" << x12
-         << ",x13=" << x13
-         << ",x14=" << x14
-         << ",x15=" << x15
-         << ",x16=" << x16
-         << ",x17=" << x17
-         << ",x18=" << x18
-         << ",x19=" << x19
-         << ",x20=" << x20
-         << ",x21=" << x21
-         << ",x22=" << x22
-         << ",x23=" << x23
-         << ",x24=" << x24
-         << ",x25=" << x25
-         << ",x26=" << x26
-         << ",x27=" << x27
-         << ",x28=" << x28
-         << ",x29=" << x29
-         << ",x30=" << x30
-         << ",x31=" << x31 << " }" << endl;
+int context_test() {
+    int switch_context = 7331;
+    cout << "CONTEXT_THREAD(switch_context)=" << switch_context << endl;
+    return 0;
 }
 
 int bss_test_1, bss_test_2, bss_test_3;
@@ -120,9 +64,6 @@ int main()
     cout << "- Teste de corretude de inicialização" << endl;
     print_mstatus();
 
-    cout << "- Registradores" << endl;
-    print_registers();
-
     cout << "- Trap Vector" << endl;
     print_mtvec();
 
@@ -137,7 +78,11 @@ int main()
     cout << endl;
 
     cout << n++ << ". Teste de corretude de troca de contexto" << endl;
-
+    int switch_context = 1337;
+    cout << "MAIN(switch_context)=" << switch_context << endl;
+    Thread * context = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(1)), &context_test);
+    context->join();
+    cout << "MAIN(switch_context)=" << switch_context << endl;
     cout << endl;
 
     cout << n++ << ". Corretude do escalonador SJF!" << endl;
