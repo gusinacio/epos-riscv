@@ -42,7 +42,7 @@ public:
     class Context
     {
     public:
-        Context(const Log_Addr & entry, const Log_Addr & exit): _zero(0), _reg_ra(exit), _reg_ip(entry) {}
+        Context(const Log_Addr & entry, const Log_Addr & exit): _reg_ra(exit), _reg_ip(entry) {}
 
         void save() volatile  __attribute__ ((naked));
         void load() const volatile;
@@ -55,7 +55,6 @@ public:
         }
 
     public:
-        Reg32 _zero;
         Reg32 _reg_ra; // return address
         Reg32 _reg_x5; // general-purpose registers (x5-31)
         Reg32 _reg_x6;
