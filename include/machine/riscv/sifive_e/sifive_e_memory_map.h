@@ -15,8 +15,8 @@ struct Memory_Map
     enum {
         UART_BASE                   = 0x10000000, // UART
         TIMER_BASE                  = 0x02004000,
-        GPIOA_BASE                  = 0x10001000,
-        RTC_BASE                    = 0x101000,
+        GPIOA_BASE                  = 0x03000000,
+        RTC_BASE                    = 0x00101000,
 
         CLINT_BASE                  = 0x02000000,
         PLIIC_CPU_BASE              = 0x0C000000,

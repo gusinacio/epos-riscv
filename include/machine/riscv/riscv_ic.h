@@ -27,11 +27,6 @@ public:
         // implement
     };
 
-    // MASKS
-    enum {
-        // implement
-    };
-
     // Interrupt IDS
     enum {
         INT_SYS_TIMER   = 7,
@@ -80,16 +75,19 @@ public:
     static void enable() {
         db<IC>(TRC) << "IC::enable()" << endl;
         // enable all interrupts
+        // IMPLEMENT
     }
     static void enable(Interrupt_Id i) {
         db<IC>(TRC) << "IC::enable(int=" << i << ")" << endl;
         assert(i < INTS);
         // enable interrupt with id = i
+        // IMPLEMENT
     }
 
     static void disable() {
         db<IC>(TRC) << "IC::disable()" << endl;
         // disable all interrupts
+        // IMPLEMENT
     }
     static void disable(Interrupt_Id i) {
         db<IC>(TRC) << "IC::disable(int=" << i << ")" << endl;
@@ -99,6 +97,7 @@ public:
 
     static Interrupt_Id int_id() {
         // return interrupt id
+        // IMPLEMENT
         return 0;
     }
 
@@ -110,15 +109,12 @@ public:
         db<IC>(TRC) << "IC::ipi(cpu=" << cpu << ",int=" << i << ")" << endl;
         assert(i < INTS);
         // SEND IPI
+        // IMPLEMENT
     }
 
-    void undefined_instruction();
-    void software_interrupt();
-    void prefetch_abort();
-    void data_abort();
-    void reserved();
-    void fiq();
-    void exception_handling();
+    static void ipi_eoi(Interrupt_Id i) {
+        // IMPLEMENT
+    }
 
 private:
     static void dispatch(unsigned int i);
@@ -127,10 +123,20 @@ private:
     static void int_not(Interrupt_Id i);
     static void hard_fault(Interrupt_Id i);
 
+    void undefined_instruction();
+    void software_interrupt();
+    void prefetch_abort();
+    void data_abort();
+    void reserved();
+    void fiq();
+
     // Physical handler
     static void entry();
+    void exception_handling();
 
     static void init();
+
+    static volatile CPU::Reg32 & reg(unsigned int o) { return reinterpret_cast<volatile CPU::Reg32 *>(Memory_Map::CLINT_BASE)[o / sizeof(CPU::Reg32)]; }
 
 private:
     static Interrupt_Handler _int_vector[INTS];
