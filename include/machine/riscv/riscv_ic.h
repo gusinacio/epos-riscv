@@ -117,22 +117,23 @@ public:
     }
 
 private:
-    static void dispatch(unsigned int i);
+    static void dispatch();
 
     // Logical handlers
     static void int_not(Interrupt_Id i);
     static void hard_fault(Interrupt_Id i);
 
-    void undefined_instruction();
-    void software_interrupt();
-    void prefetch_abort();
-    void data_abort();
-    void reserved();
-    void fiq();
+    static void undefined_instruction(Interrupt_Id i);
+    static void software_interrupt(Interrupt_Id i);
+    static void prefetch_abort(Interrupt_Id i);
+    static void data_abort(Interrupt_Id i);
+    static void reserved(Interrupt_Id i);
+    static void fiq(Interrupt_Id i);
+
 
     // Physical handler
     static void entry();
-    void exception_handling();
+    static void exception_handling();
 
     static void init();
 
