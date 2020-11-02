@@ -49,7 +49,7 @@ _reset:                                                                         
                                                                                 \t\n\
         # Machine's trap vector base address is set to vector table             \t\n\
         # IMPLEMENT : FOR WHILE, ONLY ADDRESSING THE EXCEPTION HANDLING         \t\n\
-        la      t2, _exception_handling                                         \t\n\
+        la      t2, _int_entry                                                  \t\n\
         csrw    mtvec, t2                                                       \t\n\
                                                                                 \t\n\
         # Setting Machine's interrupt-enable bits (`mie` register):             \t\n\
