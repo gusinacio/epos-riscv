@@ -71,7 +71,7 @@ public:
         db<IC>(TRC) << "IC::enable()" << endl;
         // enable all interrupts
         CPU::Reg32 m;
-        ASM("csrrc %0, mie, %1"
+        ASM("csrrs %0, mie, %1"
                      : "=r"(m)
                      : "r"(_old_state));
     }
