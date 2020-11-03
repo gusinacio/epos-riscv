@@ -40,8 +40,7 @@ void IC::entry()
         "sw         t4, 52(sp)             \n"
         "sw         t5, 56(sp)             \n"
         "sw         t6, 60(sp)             \n"
-        "csrr       a0, mcause             \n"
-        "jal        _dispatch              \n"
+        "jal        _exception_handling    \n"
         "lw         ra, 0(sp)              \n"
         "lw         a0, 4(sp)              \n"
         "lw         a1, 8(sp)              \n"
@@ -121,8 +120,16 @@ void IC::fiq(Interrupt_Id i)
 
 void IC::exception_handling()
 {
-    db<IC>(ERR) << "Exception abort" << endl;
-    // TODO IMPLEMENT
-    Machine::panic();
+    unsigned int cause;
+    asm (
+	    "csrr %0, mcause;":"=r"(cause)
+	);
+    bool interrupt = (cause >> 31) & 1;
+    if (interrupt) {
+        IC::dispatch();
+    } else {
+        db<IC>(ERR) << "Exception abort" << endl;
+        Machine::panic();
+    }
 }
 __END_SYS
