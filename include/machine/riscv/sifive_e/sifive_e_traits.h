@@ -58,7 +58,7 @@ template <> struct Traits<IC>: public Traits<Machine_Common>
     static const bool debugged = hysterically_debugged;
 
     static const unsigned int IRQS = 0;
-    static const unsigned int INTS = 0;
+    static const unsigned int INTS = 32;
 };
 
 template <> struct Traits<Timer>: public Traits<Machine_Common>

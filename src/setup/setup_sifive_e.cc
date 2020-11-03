@@ -54,6 +54,8 @@ _reset:                                                                         
                                                                                 \t\n\
         # Setting Machine's interrupt-enable bits (`mie` register):             \t\n\
         # IMPLEMENT : configure MIE                                             \t\n\
+        li      t0, (1 << 11) | (1 << 7) | (1 << 3)                            \t\n\
+        csrw    mie, t0                                                         \t\n\
                                                                                 \t\n\
         mret                                                                    \t\n\
                                                                                 \t\n\

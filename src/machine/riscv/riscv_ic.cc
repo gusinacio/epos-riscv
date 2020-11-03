@@ -17,6 +17,7 @@ __BEGIN_SYS
 
 // Class attributes
 IC::Interrupt_Handler IC::_int_vector[IC::INTS];
+CPU::Reg32 IC::_old_state;
 
 // Class methods
 void IC::entry()

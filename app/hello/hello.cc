@@ -7,5 +7,8 @@ OStream cout;
 int main()
 {
     cout << "Hello World!" << endl;
+    while (1) {
+        continue;
+    }
     return 0;
 }

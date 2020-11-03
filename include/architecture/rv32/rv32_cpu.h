@@ -255,24 +255,6 @@ public:
         return value;
     }
 
-    static void mie(Reg value)
-    {
-        ASM("csrw mie, %0"
-            :
-            : "r"(value)
-            : "cc");
-    }
-
-    static Reg mie()
-    {
-        Reg value;
-        ASM("csrr %0, mie"
-            : "=r"(value)
-            :
-            :);
-        return value;
-    }
-
     static unsigned int cores()
     {
         return Traits<Build>::CPUS;
@@ -280,10 +262,10 @@ public:
 
     static void smp_barrier(unsigned long cores = cores()) { CPU_Common::smp_barrier<&finc>(cores, id()); }
 
-    static void int_enable() { mie(MIE_DEFAULTS); }
-    static void int_disable() { mie(0); }
+    static void int_enable() { mstatus(mstatus() | FLAG_MIE); }
+    static void int_disable() { mstatus(mstatus() & ~FLAG_MIE); }
 
-    static bool int_enabled() { return (mie() & MIE_DEFAULTS); }
+    static bool int_enabled() { return (mstatus() & FLAG_MIE); }
     static bool int_disabled() { return !int_enabled(); }
 
     static void csrr31() { ASM("csrr x31, mstatus"

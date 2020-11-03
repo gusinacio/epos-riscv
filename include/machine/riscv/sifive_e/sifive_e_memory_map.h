@@ -20,7 +20,7 @@ struct Memory_Map
 
         CLINT_BASE                  = 0x02000000,
         PLIIC_CPU_BASE              = 0x0C000000,
-        PRIVATE_TIMER_BASE          = 0x2000000
+        PRIVATE_TIMER_BASE          = 0x0000bff8
     };
 
     // Physical Memory
