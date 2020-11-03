@@ -58,9 +58,8 @@ void IC::entry()
         "lw         t4, 52(sp)             \n"
         "lw         t5, 56(sp)             \n"
         "lw         t6, 60(sp)             \n"
-        "addi       sp, sp, 64             \n"
-        "mret                              \n"
-        );
+        "addi       sp, sp, 64             \n");
+    ASM("mret                              \n");
 }
 
 void IC::dispatch()
