@@ -45,7 +45,7 @@ public:
         INT_USB0        = 0,
         INT_FIRST_HARD  = 0,
         INT_LAST_HARD   = 0,
-        INT_RESCHEDULER = 0
+        INT_RESCHEDULER = 16
     };
 
     // address

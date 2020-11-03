@@ -47,7 +47,11 @@ public:
 
     static Time_Stamp time_stamp() { 
         // TODO IMPLEMENT
-        return CPU::Reg64(0);
+	unsigned int stamp;
+	asm (
+           "rdtime %0;":"=r"(stamp) 
+	   );
+	return stamp;
     }
 
 
