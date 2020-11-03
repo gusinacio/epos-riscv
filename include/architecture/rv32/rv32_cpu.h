@@ -193,7 +193,7 @@ public:
     /*
     template<typename T>
     static T tsl(volatile T & lock) {
-        //implement
+        // TODO implement
     }
     */
 
@@ -201,7 +201,7 @@ public:
     /*
     template<typename T>
     static T finc(volatile T & value) {
-        //implement
+        // TODO implement
     }
     */
 
@@ -209,7 +209,7 @@ public:
     /*
     template<typename T>
     static T fdec(volatile T & value) {
-        //implement
+        // TODO implement
     }
     */
 
@@ -217,7 +217,7 @@ public:
     /*
     template <typename T>
     static T cas(volatile T & value, T compare, T replacement) {
-        //implement
+        // TODO implement
     }
     */
 

@@ -46,7 +46,7 @@ public:
     // static PPB accuracy() { return ACCURACY; }
 
     static Time_Stamp time_stamp() { 
-        // IMPLEMENT
+        // TODO IMPLEMENT
         return CPU::Reg64(0);
     }
 

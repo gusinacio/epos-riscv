@@ -122,7 +122,7 @@ void IC::fiq(Interrupt_Id i)
 void IC::exception_handling()
 {
     db<IC>(ERR) << "Exception abort" << endl;
-    // IMPLEMENT
+    // TODO IMPLEMENT
     Machine::panic();
 }
 __END_SYS

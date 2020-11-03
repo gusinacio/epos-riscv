@@ -48,19 +48,18 @@ _reset:                                                                         
         csrw    mepc, t1                                                        \t\n\
                                                                                 \t\n\
         # Machine's trap vector base address is set to vector table             \t\n\
-        # IMPLEMENT : FOR WHILE, ONLY ADDRESSING THE EXCEPTION HANDLING         \t\n\
         la      t2, _int_entry                                                  \t\n\
         csrw    mtvec, t2                                                       \t\n\
                                                                                 \t\n\
         # Setting Machine's interrupt-enable bits (`mie` register):             \t\n\
-        # IMPLEMENT : configure MIE                                             \t\n\
+        # TODO IMPLEMENT : configure MIE                                             \t\n\
         li      t0, (1 << 11) | (1 << 7) | (1 << 3)                            \t\n\
         csrw    mie, t0                                                         \t\n\
                                                                                 \t\n\
         mret                                                                    \t\n\
                                                                                 \t\n\
 secondary:                                                                      \t\n\
-        # IMPLEMENT : prepare to be awaken                                      \t\n\
+        # TODO IMPLEMENT : prepare to be awaken                                      \t\n\
                                                                                 \t\n\
 wait:                                                                           \t\n\
         wfi                                                                     \t\n\

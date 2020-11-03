@@ -24,7 +24,6 @@ public:
 
     // MIE interrupt flags
     enum {
-        // implement
         MCAUSE_MASK = 0x3FF
     };
 
@@ -51,13 +50,7 @@ public:
 
     // address
     enum {
-        // implement
         ALL_BITS = 0xffffffff
-    };
-
-    // clint offsets
-    enum {
-        // implement
     };
 
 public:
@@ -123,11 +116,11 @@ public:
         db<IC>(TRC) << "IC::ipi(cpu=" << cpu << ",int=" << i << ")" << endl;
         assert(i < INTS);
         // SEND IPI
-        // IMPLEMENT
+        // TODO IMPLEMENT
     }
 
     static void ipi_eoi(Interrupt_Id i) {
-        // IMPLEMENT
+        // TODO IMPLEMENT
     }
 
 private:

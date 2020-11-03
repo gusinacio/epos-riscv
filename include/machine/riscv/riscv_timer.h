@@ -91,7 +91,7 @@ public:
     void handler(const Handler & handler) { _handler = handler; }
 
     static void config(const Hertz & frequency) {
-        // IMPLEMENT: set timer to next interrupt
+        // set timer to next interrupt
         reg(MTIMECMP) = reg(MTIME) + frequency;
     }
 
