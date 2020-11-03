@@ -1,8 +1,6 @@
 *.o
 
 # Exclude application binaries
-app/
-
 !app/*/*.cc
 !app/*/*.h
 !app/*/makefile
