@@ -57,6 +57,16 @@ namespace Scheduling_Criteria
 
         operator const volatile int() const volatile { return _priority; }
 
+        Priority operator +=(Priority change) {
+            _priority += change;
+            return *this;
+        }
+
+        Priority operator -=(Priority change) {
+            _priority -= change;
+            return *this;
+        }
+
         const Microsecond period() { return 0;}
         void period(const Microsecond & p) {}
 
@@ -105,6 +115,24 @@ namespace Scheduling_Criteria
     public:
         template <typename ... Tn>
         SJF(unsigned int time = 0, Tn & ... an): Priority(time) {};
+    };
+
+    // Feedback Scheduling
+    class FS: public Priority
+    {
+    public:
+        enum {
+            MAIN   = 0,
+            NORMAL = 1,
+            IDLE   = 11
+        };
+
+        static const bool timed = true;
+        static const bool dynamic = true;
+        static const bool preemptive = true;
+
+    public:
+        FS(int p = NORMAL): Priority(p) {}
     };
 
 

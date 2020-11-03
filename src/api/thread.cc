@@ -302,6 +302,14 @@ void Thread::reschedule()
     // lock() must be called before entering this method
     assert(locked());
 
+    // Promotes thread to the uper queue.
+    if(EQUAL<Criterion, Scheduling_Criteria::FS>::Result)
+    {
+        // Checks maximum priority
+        if (running()->_link.rank() > Criterion::HIGH)
+            running()->_link.promote();
+    }
+
     Thread * prev = running();
     Thread * next = _scheduler.choose();
 
@@ -312,6 +320,15 @@ void Thread::reschedule()
 void Thread::time_slicer(IC::Interrupt_Id i)
 {
     lock();
+
+    if(EQUAL<Criterion, Scheduling_Criteria::FS>::Result)
+    {
+        // Lowers thread rank
+        if (running()->_link.rank() >= (IDLE - 1))
+            running()->_link.demote();
+        else
+            running()->_link.demote(2);
+    }
 
     reschedule();
 }
