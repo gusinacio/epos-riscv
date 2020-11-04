@@ -11,7 +11,7 @@
 #define ARCH rv32
 #define MACH riscv
 #define MMOD sifive_e
-#define APPL philosophers_dinner
+#define APPL hello
 #define __mode_library__
 #define __arch_rv32__
 #define __mach_riscv__
