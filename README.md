@@ -1,4 +1,4 @@
-# P1 - EPOS
+# P2 - EPOS
 
 ## Installing
 
@@ -8,55 +8,33 @@ After that, it is important to check in ```makedefs``` the PATH for your compile
 
 ## Testing
 
-Go into the directory where you extracted EPOS and issue a ```make all``` to have instances of EPOS built for each of the applications in the ```app``` directory, or ```make APPLICATION=correctness_tests``` to build the intended tests for this deliver (P1). 
+Go into the directory where you extracted EPOS and issue a ```make all``` to have instances of EPOS built for each of the applications in the ```app``` directory to build the intended tests for this delivery (P2). 
 
 ## Running
 
-After building an application-oriented instance of EPOS, you can run the application with the tailored EPOS on QEMU using: ```make APPLICATION=<app> run```. The prepared tests are run with ```make APPLICATION=correctness_tests run```. The application runs in an instance of QEMU, SiFive-E RISC-V machine.
+After building an application-oriented instance of EPOS, you can run the application with the tailored EPOS on QEMU using: ```make APPLICATION=<app> run```. The prepared tests are run with ```make APPLICATION=alarm_test run``` for alarms and delays evaluation, and ```make APPLICATION=time_preemptive run``` to test the implemented scheduler. The applications run in an instance of QEMU, SiFive-E RISC-V machine.
 
 ## Tests done
 
 -------------------------------------------------------
-
-### BSS test
-We have 3 uninitialized global variables that we print to prove that they’re zero.
-
--------------------------------------------------------
-
-### Trap Vector
-We print the `mtvec` register to prove that there is an address.
+### Timers Initialization and Configuration
+The timers were set to work with two different channels (Alarm and Scheduler), and configured with their respective handlers. The timers use the MTIME and MTIMECMP registers to keep track of time_stamps and to launch timer interrupts. The correct configuration can be inferred in the subsequent tests since timers are the base for the other points evaluated in this delivery.
 
 -------------------------------------------------------
-
-### Memory Initialization
-We print the memory base address to prove its initialization at 0x80000000 as defined in the QEMU Memory Map to the SiFive-E machine.
-
--------------------------------------------------------
-
-### Operation Mode
-We print the `mstatus` in binary to prove its initialization in the Machine Mode (0b11 << 11).
+### Timer Handler
+The timer handler calls again config() for setting MTIME and MTIMECMP registers and keeps triggering interruptions. The handler also calls the scheduler and alarms handlers.
 
 -------------------------------------------------------
-
-### Registers cleaning
-The registers are cleaned on a Context load. Printing all the registers are a little tricky because it may dirty some registers in the process.
+### Alarms Configuration
+To test the alarms functioning we used the available alarm_test already implemented in EPOS source tree. It programs two distinct alarms and a delay, and alternates the handlers execution according to the programmed time.
 
 -------------------------------------------------------
+### Interrupts Handling
+For handling the interruptions, we used the mtvec for setting the address of `_int_entry`. It saves all registers, and calls the exception_handler. If the mcauses says that it is an interruption it calls the handler for the given interruption_id, else, it calls PANIC() because it is an untreated exception.
 
-### MMU
-We print the `satp` in binary register to prove that it is initialized with zero mode (no virtual_to_physical address translation).
+-------------------------------------------------------
+### Time Preemptive Scheduler
+The Scheduling algorithm implemented for this delivery was the Feedback Scheduling (FS) algorithm. It consists in a dynamic, time-preemptive algorithm that uses the idea of multiple queues to realize the scheduling. In our implementation we simulated the multiple queues as different priorities, where greater priority threads execute first, and threads with the same priority are scheduled in a Round-Robin manner. It is a dynamic algorithm, where the dynamic change is given by the thread behavior: CPU-Bound threads that consume their QUANTUMs tend to decrease their priority and go to lower queues, while IO-Bound threads that use only a part of their QUANTUM go up. These changes are made using a Priority based Scheduling Criteria and updates using demote/promote to adjust the priorities.
+<Describe test application>
+<Describe problem with threads scheduling>
 
-------------------------------------------------------
-
-### UART
-We print a “Hello World!”.
-
-------------------------------------------------------
-
-### Switch Context
-This is difficult to prove that we are switching contexts but we tried to create a variable where we print initially, call another thread which prints the same variable name, and after context switch again, we print the old variable again.
-
-------------------------------------------------------
-
-### Scheduler
-We used the Shortest Job First (SJF) algorithm. The algorithm consists in telling the scheduler the intended duration of the created job, and it schedules the shortest ones first. It is a non-preemptive, non-timed and non-dinamic algorithm, and we created a test where 3 Threads with different durations are created. Each thread prints its duration and its id, to prove that those with shorter durations execute first. 
