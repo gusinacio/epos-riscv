@@ -1,19 +1,17 @@
-// // EPOS RISC-V 32 Time-Stamp Counter Mediator Initialization
+// EPOS RISC-V 32 Time-Stamp Counter Mediator Initialization
 
+#include <architecture/tsc.h>
+#include <machine/timer.h>
 
-// #include <architecture/tsc.h>
-// #include <machine/timer.h>
+__BEGIN_SYS
 
-// __BEGIN_SYS
+void TSC::init()
+{
+    db<Init, TSC>(TRC) << "TSC::init()" << endl;
 
-// void TSC::init()
-// {
-//     db<Init, TSC>(TRC) << "TSC::init()" << endl;
+    if(CPU::id() == 0) {
+        // TODO implement
+    }
+}
 
-
-//     if(CPU::id() == 0) {
-//         // implement
-//     }
-// }
-
-// __END_SYS
+__END_SYS

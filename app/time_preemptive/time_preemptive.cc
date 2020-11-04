@@ -1,5 +1,6 @@
 #include <utility/ostream.h>
 #include <process.h>
+#include <time.h>
 
 using namespace EPOS;
 
@@ -38,6 +39,7 @@ int main()
     a = new Thread(&func_a);
     b = new Thread(&func_b);
 
+    Delay alarm_test(50000000);
     a->join();
     b->join();
     // while (1) {

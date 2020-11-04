@@ -46,15 +46,13 @@ public:
     // static PPB accuracy() { return ACCURACY; }
 
     static Time_Stamp time_stamp() { 
-        // IMPLEMENT
-        return CPU::Reg64(0);
+       volatile Time_Stamp stamp = *(reinterpret_cast<CPU::Reg64*>(REG_BASE));
+	   return stamp;
     }
 
 
 private:
-    static void init() {
-        
-    }
+    static void init();
 
     static volatile CPU::Reg32 & reg(unsigned int o) { return reinterpret_cast<volatile CPU::Reg32 *>(TSC_BASE)[o / sizeof(CPU::Reg32)]; }
 

@@ -28,7 +28,7 @@ void Thread::init()
     // created first and dispatch won't replace it nor by itself neither by IDLE (which
     // has a lower priority)
 
-    // IMPLEMENT before using a policy that enables timed scheduling
+    // TODO IMPLEMENT before using a policy that enables timed scheduling
     if(Criterion::timed)
         _timer = new (SYSTEM) Scheduler_Timer(QUANTUM, time_slicer);
 

@@ -59,7 +59,7 @@ public:
 
     static void smp_barrier_init(unsigned int n_cpus) {
         db<Machine>(TRC) << "SMP::init()" << endl;
-        // IMPLEMENT
+        // TODO IMPLEMENT
     }
 
     static const UUID & uuid() { return System::info()->bm.uuid; }

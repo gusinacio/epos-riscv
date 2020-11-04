@@ -24,7 +24,6 @@ public:
 
     // MIE interrupt flags
     enum {
-        // implement
         MCAUSE_MASK = 0x3FF
     };
 
@@ -46,18 +45,12 @@ public:
         INT_USB0        = 0,
         INT_FIRST_HARD  = 0,
         INT_LAST_HARD   = 0,
-        INT_RESCHEDULER = 0
+        INT_RESCHEDULER = 16
     };
 
     // address
     enum {
-        // implement
         ALL_BITS = 0xffffffff
-    };
-
-    // clint offsets
-    enum {
-        // implement
     };
 
 public:
@@ -78,7 +71,7 @@ public:
         db<IC>(TRC) << "IC::enable()" << endl;
         // enable all interrupts
         CPU::Reg32 m;
-        ASM("csrrc %0, mie, %1"
+        ASM("csrrs %0, mie, %1"
                      : "=r"(m)
                      : "r"(_old_state));
     }
@@ -123,11 +116,11 @@ public:
         db<IC>(TRC) << "IC::ipi(cpu=" << cpu << ",int=" << i << ")" << endl;
         assert(i < INTS);
         // SEND IPI
-        // IMPLEMENT
+        // TODO IMPLEMENT
     }
 
     static void ipi_eoi(Interrupt_Id i) {
-        // IMPLEMENT
+        // TODO IMPLEMENT
     }
 
 private:
