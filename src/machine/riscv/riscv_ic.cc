@@ -128,7 +128,7 @@ void IC::exception_handling()
     if (interrupt) {
         IC::dispatch();
     } else {
-        db<IC>(ERR) << "Exception abort" << endl;
+        db<IC>(ERR) << "Exception(" << hex << int_id() << dec << ") abort" << endl;
         Machine::panic();
     }
 }

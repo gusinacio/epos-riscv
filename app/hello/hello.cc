@@ -7,6 +7,7 @@ OStream cout;
 
 int func_a()
 {
+	CPU::mstatus(CPU::mstatus() | (1 << 3));
 	while (true)
 	{
 		int i = 0;
@@ -18,6 +19,7 @@ int func_a()
 
 int func_b()
 {
+	CPU::mstatus(CPU::mstatus() | (1 << 3));
 	while (true)
 	{
 		int i = 0;
