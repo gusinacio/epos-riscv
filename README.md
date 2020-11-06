@@ -35,6 +35,7 @@ For handling the interruptions, we used the mtvec for setting the address of `_i
 -------------------------------------------------------
 ### Time Preemptive Scheduler
 The Scheduling algorithm implemented for this delivery was the Feedback Scheduling (FS) algorithm. It consists in a dynamic, time-preemptive algorithm that uses the idea of multiple queues to realize the scheduling. In our implementation we simulated the multiple queues as different priorities, where greater priority threads execute first, and threads with the same priority are scheduled in a Round-Robin manner. It is a dynamic algorithm, where the dynamic change is given by the thread behavior: CPU-Bound threads that consume their QUANTUMs tend to decrease their priority and go to lower queues, while IO-Bound threads that use only a part of their QUANTUM go up. These changes are made using a Priority based Scheduling Criteria and updates using demote/promote to adjust the priorities.
-<Describe test application>
+In the ```time_preemptive``` application, we create three distinct threads: A and B that simulate CPU-Bound threads and only execute a while(true) loop; and C
+that simulates an IO-Bound thread and calls a Delay to be awaken by an Alarm on each execution.
 <Describe problem with threads scheduling>
 

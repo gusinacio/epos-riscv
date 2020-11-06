@@ -12,10 +12,10 @@ unsigned int CPU::_bus_clock;
 // Class methods
 void CPU::Context::save() volatile
 {
-    ASM("       sw      x31, -120(sp)           \n"     // push x31 to its offset on the stack to use it as a temporary
+    ASM("       sw      x31, -116(sp)           \n"     // push x31 to its offset on the stack to use it as a temporary
         "       la      x31,      pc            \n"
         "       sw      x31,   -4(sp)           \n"     // push PC
-        "       lw      x31, -120(sp)           \n"     // pop x31
+        "       lw      x31, -116(sp)           \n"     // pop x31
         "       sw       x5, -112(sp)           \n"     // push x5-x31
         "       sw       x6, -108(sp)           \n"
         "       sw       x7, -104(sp)           \n"
