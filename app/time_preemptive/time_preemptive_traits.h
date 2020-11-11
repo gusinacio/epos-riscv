@@ -145,7 +145,7 @@ template<> struct Traits<Synchronizer>: public Traits<Build>
 
 template<> struct Traits<Alarm>: public Traits<Build>
 {
-    static const bool visible = hysterically_debugged;
+    static const bool visible = true;
     static const bool enabled = false;
 };
 
