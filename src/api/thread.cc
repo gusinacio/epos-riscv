@@ -297,14 +297,14 @@ void Thread::wakeup_all(Queue * q)
 
 void Thread::reschedule()
 {
-    db<Thread>(TRC) << "Thread::reschedule()" << endl;
+    if(!Criterion::timed || Traits<Thread>::hysterically_debugged)
+        db<Thread>(TRC) << "Thread::reschedule()" << endl;
 
     // lock() must be called before entering this method
     assert(locked());
 
     // Promotes thread to the uper queue.
-    if(EQUAL<Criterion, Scheduling_Criteria::FS>::Result)
-    {
+    if(EQUAL<Criterion, Scheduling_Criteria::FS>::Result) {
         // Checks maximum priority
         if (running()->_link.rank() > (MAIN+1))
             running()->_link.promote();
@@ -321,8 +321,7 @@ void Thread::time_slicer(IC::Interrupt_Id i)
 {
     lock();
 
-    if(EQUAL<Criterion, Scheduling_Criteria::FS>::Result && running()->_link.rank() > MAIN)
-    {
+    if(EQUAL<Criterion, Scheduling_Criteria::FS>::Result && running()->_link.rank() > MAIN) {
         // Lowers thread rank
         if (running()->_link.rank() >= (IDLE - 1))
             running()->_link.demote();
@@ -364,6 +363,8 @@ void Thread::dispatch(Thread * prev, Thread * next, bool charge)
 
 int Thread::idle()
 {
+    db<Thread>(TRC) << "Thread::idle(this=" << running() << ")" << endl;
+
     while(_thread_count > 1) { // someone else besides idle
         if(Traits<Thread>::trace_idle)
             db<Thread>(TRC) << "Thread::idle(this=" << running() << ")" << endl;
@@ -396,4 +397,5 @@ volatile CPU::Reg This_Thread::id()
 {
     return _not_booting ? CPU::Reg(Thread::self()) : CPU::Reg(CPU::id() + 1);
 }
+
 __END_UTIL

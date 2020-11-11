@@ -21,13 +21,6 @@ private:
     static const bool smp = Traits<System>::multicore;
 
 public:
-
-    enum {
-        SIFIVE_TEST_FAIL = 0x3333,
-	    SIFIVE_TEST_PASS = 0x5555,
-        SIFIVE_TEST_CTRL_ADDR = 0x100000,
-    };
-
     Machine() {}
 
     static void delay(const Microsecond & time) {
@@ -42,24 +35,22 @@ public:
     {
         if (Traits<System>::reboot) {
             db<Machine>(WRN) << "Machine::reboot()" << endl;
-            poweroff();
-        } else {
             CPU::halt();
+        } else {
+            poweroff();
         }
     }
     static void poweroff()
     {
         db<Machine>(WRN) << "Machine::poweroff()" << endl;
-        volatile CPU::Reg32 *test = (CPU::Reg32 *)(void *)(SIFIVE_TEST_CTRL_ADDR);
-        *test = SIFIVE_TEST_PASS;
-        while (1) {
-            asm volatile("");
-        }
+        CPU::Reg32 *reset = (CPU::Reg32 *)0x100000;
+        reset[0] = 0x5555;
+        while (1);
     }
 
     static void smp_barrier_init(unsigned int n_cpus) {
         db<Machine>(TRC) << "SMP::init()" << endl;
-        // TODO IMPLEMENT
+        // IMPLEMENT
     }
 
     static const UUID & uuid() { return System::info()->bm.uuid; }
