@@ -5,13 +5,7 @@
 
 #include <architecture/cpu.h>
 #include <architecture/tsc.h>
-
-#define __ic_common_only__
-#include <machine/ic.h>
-#undef __ic_common_only__
-
-#include <architecture/cpu.h>
-#include <architecture/tsc.h>
+#include <system/memory_map.h>
 
 __BEGIN_SYS
 
@@ -24,15 +18,11 @@ private:
     static const unsigned int CLOCK = Traits<Machine>::TIMER_CLOCK;
     static const unsigned int ACCURACY = 40000; // this is actually unknown at the moment
 
-    enum {
-        REG_BASE = 0x0200bff8,
-        TSC_BASE = 0x0,
+    // Registers offsets from CLINT_BASE
+    enum {               // Description
+        MTIME  = 0xbff8, // Counter (lower 32 bits)
+        MTIMEH = 0xbffc  // Counter (upper 32 bits)
     };
-
-    //offsets
-    // enum {             // Description
-        // FIELD       = 
-    // };
 
 public:
     using TSC_Common::Time_Stamp;
@@ -43,19 +33,14 @@ public:
     TSC() {}
 
     static Hertz frequency() { return CLOCK; }
-    // static PPB accuracy() { return ACCURACY; }
+    static PPB accuracy() { return ACCURACY; }
 
-    static Time_Stamp time_stamp() { 
-       volatile Time_Stamp stamp = *(reinterpret_cast<CPU::Reg64*>(REG_BASE));
-	   return stamp;
-    }
-
+    static Time_Stamp time_stamp() { return (CPU::Reg64(reg(MTIMEH)) << 32) | reg(MTIME); }
 
 private:
-    static void init();
+    static void init() {}
 
-    static volatile CPU::Reg32 & reg(unsigned int o) { return reinterpret_cast<volatile CPU::Reg32 *>(TSC_BASE)[o / sizeof(CPU::Reg32)]; }
-
+    static volatile CPU::Reg32 & reg(unsigned int o) { return reinterpret_cast<volatile CPU::Reg32 *>(Memory_Map::CLINT_BASE)[o / sizeof(CPU::Reg32)]; }
 };
 
 __END_SYS

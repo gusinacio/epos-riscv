@@ -21,9 +21,9 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
 
     // Physical Memory
     static const unsigned int MEM_BASE          = 0x80000000;
-    static const unsigned int VECTOR_TABLE      = NOT_USED; // not used
-    static const unsigned int PAGE_TABLES       = NOT_USED; // not used
-    static const unsigned int MEM_TOP           = 0x87ffffff; // 128mb
+    static const unsigned int VECTOR_TABLE      = NOT_USED;
+    static const unsigned int PAGE_TABLES       = NOT_USED; // No paging MMU
+    static const unsigned int MEM_TOP           = 0x87ffffff; // 128 MB
     static const unsigned int BOOT_STACK        = 0x87ffffff;
 
     // Logical Memory Map
@@ -31,18 +31,18 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     static const unsigned int SETUP             = NOT_USED;
     static const unsigned int INIT              = NOT_USED;
 
-    static const unsigned int APP_LOW           = 0x80000000; // endereco de codigo
-    static const unsigned int APP_CODE          = 0x80000000; // endereco de codigo
-    static const unsigned int APP_DATA          = 0x80000000; // dados
-    static const unsigned int APP_HIGH          = 0x87ffffff; //128mb
+    static const unsigned int APP_LOW           = 0x80000000;
+    static const unsigned int APP_CODE          = 0x80000000;
+    static const unsigned int APP_DATA          = 0x80000000;
+    static const unsigned int APP_HIGH          = 0x87ffffff;
 
-    static const unsigned int PHY_MEM           = NOT_USED;
-    static const unsigned int IO_BASE           = NOT_USED; // mmio 
-    static const unsigned int IO_TOP            = NOT_USED; // 
+    static const unsigned int PHY_MEM           = NOT_USED; // No paging MMU
+    static const unsigned int IO_BASE           = NOT_USED; // No paging MMU
+    static const unsigned int IO_TOP            = NOT_USED; // No paging MMU
 
-    static const unsigned int SYS               = NOT_USED;
-    static const unsigned int SYS_CODE          = NOT_USED;
-    static const unsigned int SYS_DATA          = NOT_USED;
+    static const unsigned int SYS               = NOT_USED; // No paging MMU
+    static const unsigned int SYS_CODE          = NOT_USED; // No paging MMU
+    static const unsigned int SYS_DATA          = NOT_USED; // No paging MMU
 
     // Default Sizes and Quantities
     static const unsigned int STACK_SIZE        = 16 * 1024;
@@ -57,8 +57,8 @@ template <> struct Traits<IC>: public Traits<Machine_Common>
 {
     static const bool debugged = hysterically_debugged;
 
-    static const unsigned int IRQS = 0;
-    static const unsigned int INTS = 32;
+    static const unsigned int IRQS = 1024; // PLIC
+    static const unsigned int INTS = 1056; // Exceptions + Software + Local + Timer + External
 };
 
 template <> struct Traits<Timer>: public Traits<Machine_Common>
@@ -96,11 +96,6 @@ template<> struct Traits<Serial_Display>: public Traits<Machine_Common>
     static const int COLUMNS = 80;
     static const int LINES = 24;
     static const int TAB_SIZE = 8;
-};
-
-template<> struct Traits<Scratchpad>: public Traits<Machine_Common>
-{
-    static const bool enabled = false;
 };
 
 __END_SYS
