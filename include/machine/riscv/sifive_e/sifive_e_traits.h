@@ -45,7 +45,7 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     static const unsigned int SYS_DATA          = NOT_USED; // No paging MMU
 
     // Default Sizes and Quantities
-    static const unsigned int STACK_SIZE        = 16 * 1024;
+    static const unsigned int STACK_SIZE        = 32 * 1024;
     static const unsigned int HEAP_SIZE         = 16 * 1024 * 1024;
     static const unsigned int MAX_THREADS       = 16;
 

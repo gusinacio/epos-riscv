@@ -11,16 +11,23 @@ void Machine::pre_init(System_Info * si)
 
     db<Init>(WRN) << "Machine::pre_init()" << endl;
 
-    db<Init, Machine>(TRC) << "Machine::pre_init()" << endl;
+    //db<Init, Machine>(TRC) << "Machine::pre_init()" << endl;
 
     if(CPU::id() == 0) {
         if(Traits<IC>::enabled) {
             IC::init();
 
+            db<Init>(WRN) << "Machine::IC Initialized()" << endl;
+
             // Wake up remaining CPUs
-            // si->bm.n_cpus = Traits<Build>::CPUS;
+            //si->bm.n_cpus = Traits<Build>::CPUS;
             if(Traits<System>::multicore)
+            {
+                for (unsigned int i = 1; i < Traits<Build>::CPUS; ++i)
+                    IC::ipi(i, IC::MACHINE_SOFT_INT);
+
                 smp_barrier_init(Traits<Build>::CPUS);
+            }
         }
     }
 }

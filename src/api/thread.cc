@@ -368,13 +368,13 @@ void Thread::rescheduler(IC::Interrupt_Id i)
 {
     lock();
 
-    if(EQUAL<Criterion, Scheduling_Criteria::FS>::Result && running()->_link.rank() > MAIN) {
-        // Lowers thread rank
-        if (running()->_link.rank() >= (IDLE - 1))
-            running()->_link.demote();
-        else
-            running()->_link.demote(2);
-    }
+    // if(EQUAL<Criterion, Scheduling_Criteria::FS>::Result && running()->_link.rank() > MAIN) {
+    //     // Lowers thread rank
+    //     if (running()->_link.rank() >= (IDLE - 1))
+    //         running()->_link.demote();
+    //     else
+    //         running()->_link.demote(2);
+    // }
 
     reschedule();
 
@@ -386,13 +386,13 @@ void Thread::time_slicer(IC::Interrupt_Id i)
 {
     lock();
 
-    if(EQUAL<Criterion, Scheduling_Criteria::FS>::Result && running()->_link.rank() > MAIN) {
-        // Lowers thread rank
-        if (running()->_link.rank() >= (IDLE - 1))
-            running()->_link.demote();
-        else
-            running()->_link.demote(2);
-    }
+    // if(EQUAL<Criterion, Scheduling_Criteria::FS>::Result && running()->_link.rank() > MAIN) {
+    //     // Lowers thread rank
+    //     if (running()->_link.rank() >= (IDLE - 1))
+    //         running()->_link.demote();
+    //     else
+    //         running()->_link.demote(2);
+    // }
 
     reschedule();
 

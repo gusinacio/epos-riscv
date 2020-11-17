@@ -131,11 +131,14 @@ public:
     static void ipi(unsigned int cpu, Interrupt_Id i) {
         db<IC>(TRC) << "IC::ipi(cpu=" << cpu << ",int=" << i << ")" << endl;
         assert(i < INTS);
-        // IMPLEMENT
+        assert(cpu < Traits<Build>::CPUS);
+
+        reg(cpu * 0x4) = 0x1 << i;
     }
 
     static void ipi_eoi(Interrupt_Id i) {
-        // IMPLEMENT
+        reg(CPU::id() * 0x4) = 0;
+        ASM("csrw mcause, zero" : : : "memory", "cc");
     }
 
 

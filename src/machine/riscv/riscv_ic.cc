@@ -124,7 +124,7 @@ void IC::undefined_instruction(Interrupt_Id i)
 
 void IC::software_interrupt(Interrupt_Id i)
 {
-    db<IC>(ERR) << "Software interrupt(i=" << i << ")" << endl;
+    db<IC>(WRN) << "Software interrupt(i=" << i << ")" << endl;
     Machine::panic();
 }
 
