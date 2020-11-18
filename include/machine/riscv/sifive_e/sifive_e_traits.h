@@ -23,8 +23,8 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     static const unsigned int MEM_BASE          = 0x80000000;
     static const unsigned int VECTOR_TABLE      = NOT_USED;
     static const unsigned int PAGE_TABLES       = NOT_USED; // No paging MMU
-    static const unsigned int MEM_TOP           = 0x87ffffff; // 128 MB
-    static const unsigned int BOOT_STACK        = 0x87ffffff;
+    static const unsigned int MEM_TOP           = 0x87fffffc; // 128 MB
+    static const unsigned int BOOT_STACK        = 0x87fffffc;
 
     // Logical Memory Map
     static const unsigned int BOOT              = NOT_USED;
@@ -34,7 +34,7 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     static const unsigned int APP_LOW           = 0x80000000;
     static const unsigned int APP_CODE          = 0x80000000;
     static const unsigned int APP_DATA          = 0x80000000;
-    static const unsigned int APP_HIGH          = 0x87ffffff;
+    static const unsigned int APP_HIGH          = 0x87fffffc;
 
     static const unsigned int PHY_MEM           = NOT_USED; // No paging MMU
     static const unsigned int IO_BASE           = NOT_USED; // No paging MMU
@@ -55,7 +55,7 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
 
 template <> struct Traits<IC>: public Traits<Machine_Common>
 {
-    static const bool debugged = hysterically_debugged;
+    static const bool debugged = true;
 
     static const unsigned int IRQS = 1024; // PLIC
     static const unsigned int INTS = 1056; // Exceptions + Software + Local + Timer + External

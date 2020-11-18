@@ -9,7 +9,6 @@ void _vector_table()
 {
     ASM("\t\n\
     j _reset                                                                    \t\n\
-    .align 4                                                                    \t\n\
 vec:                                                                            \t\n\
     IRQ0:                                                                       \t\n\
         j _exception_handling                                                   \t\n\
@@ -45,7 +44,7 @@ vec:                                                                            
         j _int_entry                                                            \t\n\
     IRQ16:                                                                      \t\n\
         j _int_entry                                                            \t\n\
-                                                                                \t\n\
+\t\n\
 _reset:                                                                         \t\n\
                                                                                 \t\n\
         # SATP should be zero, but let's make sure. Each hart has its own.      \t\n\
@@ -95,7 +94,7 @@ _reset:                                                                         
         csrw    mie, t3                                                         \t\n\
                                                                                 \t\n\
         mret                                                                    \t\n\
-                                                                                \t\n\
+\t\n\
 secondary:                                                                      \t\n\
         #j wait                                                                  \t\n\
         # Initialize boot stack of halted cores                                 \t\n\
@@ -104,7 +103,6 @@ secondary:                                                                      
         slli    t0, t0, 16                                                      \t\n\
         csrr    a0, mhartid                                                     \t\n\
         mul     t0, t0, a0                                                      \t\n\
-sub:\t\n\
         sub     sp, t1, t0                                                      \t\n\
                                                                                 \t\n\
         # Put halted harts in machine mode with interrupts enabled              \t\n\
@@ -112,8 +110,8 @@ sub:\t\n\
         csrw    mstatus, t0                                                     \t\n\
                                                                                 \t\n\
         # Machine's exception program counter (MEPC) is set to `wait`.          \t\n\
-        #la      t1, wait                                                       \t\n\
-        #csrw    mepc, t1                                                       \t\n\
+        la      t1, wait                                                       \t\n\
+        csrw    mepc, t1                                                       \t\n\
                                                                                 \t\n\
         # Machine's trap vector base address is set to vec.                     \t\n\
         la      t2, vec                                                         \t\n\
@@ -125,7 +123,7 @@ sub:\t\n\
         csrw    mie, t3                                                         \t\n\
                                                                                 \t\n\
         mret                                                                    \t\n\
-                                                                                \t\n\
+                                                                               \t\n\
 wait:                                                                           \t\n\
         wfi                                                                     \t\n\
         j _start                                                                \t\n\

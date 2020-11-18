@@ -133,11 +133,11 @@ public:
         assert(i < INTS);
         assert(cpu < Traits<Build>::CPUS);
 
-        reg(cpu * 0x4) = 0x1 << i;
+        reg(cpu * 4) = 0x1 << i;
     }
 
     static void ipi_eoi(Interrupt_Id i) {
-        reg(CPU::id() * 0x4) = 0;
+        reg(CPU::id() * 4) = 0;
         ASM("csrw mcause, zero" : : : "memory", "cc");
     }
 

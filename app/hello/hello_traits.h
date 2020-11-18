@@ -133,11 +133,6 @@ template<> struct Traits<Thread>: public Traits<Build>
     static const unsigned int QUANTUM = 10000; // us
 };
 
-// template<> struct Traits<IC>: public Traits<Build>
-// {
-//     static const bool debugged = true;
-// };
-
 template<> struct Traits<Scheduler<Thread>>: public Traits<Build>
 {
     static const bool debugged = Traits<Thread>::trace_idle || hysterically_debugged;

@@ -17,7 +17,7 @@ void Machine::pre_init(System_Info * si)
         if(Traits<IC>::enabled) {
             IC::init();
 
-            db<Init>(WRN) << "Machine::IC Initialized()" << endl;
+            db<Init>(WRN) << "Machine::IC CPUS: "<< Traits<Build>::CPUS << endl;
 
             // Wake up remaining CPUs
             //si->bm.n_cpus = Traits<Build>::CPUS;
