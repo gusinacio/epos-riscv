@@ -19,12 +19,6 @@ void IC::init()
     for(Interrupt_Id i = 0; i < INTS; i++)
         _int_vector[i] = int_not;
 
-    // Sets IPI interruptions handler
-    if (Traits<System>::multicore) {
-    	int_vector(IC::MACHINE_SOFT_INT, IC::ipi_eoi);
-        //enable(IC::MACHINE_SOFT_INT);
-    }
-
 }
 
 __END_SYS

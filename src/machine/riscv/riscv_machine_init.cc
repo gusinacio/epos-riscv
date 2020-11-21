@@ -23,8 +23,8 @@ void Machine::pre_init(System_Info * si)
             //si->bm.n_cpus = Traits<Build>::CPUS;
             if(Traits<System>::multicore)
             {
-                for (unsigned int i = 1; i < Traits<Build>::CPUS; ++i)
-                    IC::ipi(i, IC::MACHINE_SOFT_INT);
+                // for (unsigned int i = 1; i < Traits<Build>::CPUS; ++i)
+                //     IC::ipi(i, IC::MACHINE_SOFT_INT);
 
                 smp_barrier_init(Traits<Build>::CPUS);
             }

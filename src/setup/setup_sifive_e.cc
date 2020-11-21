@@ -9,6 +9,7 @@ void _vector_table()
 {
     ASM("\t\n\
     j _reset                                                                    \t\n\
+    .align 4                                                                    \t\n\
 vec:                                                                            \t\n\
     IRQ0:                                                                       \t\n\
         j _exception_handling                                                   \t\n\
@@ -44,7 +45,7 @@ vec:                                                                            
         j _int_entry                                                            \t\n\
     IRQ16:                                                                      \t\n\
         j _int_entry                                                            \t\n\
-\t\n\
+                                                                                \t\n\
 _reset:                                                                         \t\n\
                                                                                 \t\n\
         # SATP should be zero, but let's make sure. Each hart has its own.      \t\n\
@@ -94,20 +95,22 @@ _reset:                                                                         
         csrw    mie, t3                                                         \t\n\
                                                                                 \t\n\
         mret                                                                    \t\n\
-\t\n\
+                                                                                \t\n\
 secondary:                                                                      \t\n\
-        #j wait                                                                  \t\n\
-        # Initialize boot stack of halted cores                                 \t\n\
-        la      t1, __boot_stack__                                              \t\n\
+        # 32kB * hart ID is subtracted from the boot stack to avoid overlapping \t\n\
+        la      sp, __boot_stack__                                              \t\n\
         li      t0, 0x1                                                         \t\n\
         slli    t0, t0, 16                                                      \t\n\
         csrr    a0, mhartid                                                     \t\n\
         mul     t0, t0, a0                                                      \t\n\
-        sub     sp, t1, t0                                                      \t\n\
+        sub     sp, sp, t0                                                      \t\n\
                                                                                 \t\n\
-        # Put halted harts in machine mode with interrupts enabled              \t\n\
-        li      t0, (0b11 << 11) | (1 << 7) | (1 << 3)                          \t\n\
+        # The halted harts will be put into machine mode with interrupts enabled\t\n\
+        li      t0, 0b11 << 11 | (1 << 7) | (1 << 3)                            \t\n\
         csrw    mstatus, t0                                                     \t\n\
+                                                                                \t\n\
+        li      t3, (1 << 3) | (1 << 7) | (1 << 11)                             \t\n\
+        csrw    mie, t3                                                         \t\n\
                                                                                 \t\n\
         # Machine's exception program counter (MEPC) is set to `wait`.          \t\n\
         la      t1, wait                                                       \t\n\
@@ -118,14 +121,15 @@ secondary:                                                                      
         ori     t2, t2, 0x1  # OR 0x1 to active vector mode                     \t\n\
         csrw    mtvec, t2                                                       \t\n\
                                                                                 \t\n\
-        # Enable interrupts                                                     \t\n\
-        li      t3, (1 << 3) | (1 << 7) | (1 << 11)                             \t\n\
-        csrw    mie, t3                                                         \t\n\
-                                                                                \t\n\
+        # Whenever our hart is done initializing                                \t\n\
+        # we want it to return to the waiting                                   \t\n\
+        # loop, which is just below mret.                                       \t\n\
+        # We use mret here so that the mstatus register is properly updated.    \t\n\
         mret                                                                    \t\n\
-                                                                               \t\n\
+                                                                                \t\n\
 wait:                                                                           \t\n\
         wfi                                                                     \t\n\
         j _start                                                                \t\n\
         ");
+
 }
