@@ -42,10 +42,12 @@ void Thread::init()
     if(smp) {
         if(CPU::id() == 0)
             IC::int_vector(IC::INT_RESCHEDULER, rescheduler);
+        CPU::int_disable();
         IC::enable(IC::INT_RESCHEDULER);
     }
 
     // Transition from CPU-based locking to thread-based locking
+    CPU::smp_barrier();
     This_Thread::not_booting();
 }
 
