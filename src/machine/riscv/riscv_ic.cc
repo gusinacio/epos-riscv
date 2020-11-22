@@ -24,7 +24,7 @@ void IC::entry()
     // Handle interrupts in machine mode
     ASM("       .align 4                                            \n"
         // Save context
-        "	addi     sp,      sp,   -128                        \n"     // 32 regs of 4 bytes each = 128 Bytes
+        "	addi     sp,      sp,   -140                        \n"     // 32 regs of 4 bytes each = 128 Bytes
         "	sw	 x1,   4(sp)                                \n"
         "	sw	 x2,   8(sp)                                \n"
         "	sw	 x3,  12(sp)                                \n"
@@ -56,6 +56,12 @@ void IC::entry()
         "	sw	x29, 116(sp)                                \n"
         "	sw	x30, 120(sp)                                \n"
         "	sw	x31, 124(sp)                                \n"
+        "   csrr x31, mie                                \n"
+        "   sw  x31, 128(sp)                                \n"
+        "   csrr x31, mstatus                                \n"
+        "   sw  x31, 132(sp)                            \n"
+        "   csrr x31, mepc                                \n"
+        "   sw  x31, 136(sp)                            \n"
         "	la       ra, restore                                \n" // Set LR to restore context before returning
         "	j       _dispatch                                   \n"
         // Restore context
@@ -91,7 +97,13 @@ void IC::entry()
         "	lw	 x29, 116(sp)                               \n"
         "	lw	 x30, 120(sp)                               \n"
         "	lw	 x31, 124(sp)                               \n"
-        "	addi      sp,     sp,    128                        \n"
+        "       lw       x31, 128(sp)                               \n"
+        "       csrw     mie, x31                                   \n"
+        "       lw       x31, 132(sp)                               \n"
+        "       csrw mstatus, x31                                   \n"
+        "       lw       x31, 136(sp)                               \n"
+        "       csrw    mepc, x31                                   \n"
+        "	addi      sp,     sp,    140                        \n"
         "	mret                                                \n" : : "i"(dispatch));
 }
 
@@ -154,8 +166,9 @@ void IC::fiq(Interrupt_Id i)
 
 void IC::exception_handling()
 {
-    db<IC>(ERR) << "Exception abort" << endl;
     Interrupt_Id id = int_id();
+    db<IC>(ERR) << "Exception abort{id=" << id << "}" << endl;
+    
     switch(id) {
         case 0: // unaligned Instruction
         case 1: // instruction access failure

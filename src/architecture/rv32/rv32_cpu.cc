@@ -155,10 +155,6 @@ void CPU::switch_context(Context ** o, Context * n)
         "       lw      x31,   -8(sp)           \n"
         "       lw       ra, -116(sp)           \n"     // pop LR
         "       lw      x31,   -4(sp)           \n"     // pop PC
-        "       li      t0, (1 << 11) | (1 << 7) | (1 << 3) \n"
-        "       csrw    mie, t0                 \n"
-        "       csrsi   mstatus, (1 << 3)       \n"
-        "       csrw    mepc, x31               \n"
         "       jalr    x0,    (x31)            \n"     // return (for the thread entering the CPU)
         ".ret:  jalr    x0,     (ra)            \n");   // return (for the thread leaving the CPU)
 }
