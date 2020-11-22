@@ -60,7 +60,7 @@ _reset:                                                                         
         # 32kB * hart ID is subtracted from the boot stack to avoid overlapping \t\n\
         la      sp, __boot_stack__                                              \t\n\
         li      t0, 0x1                                                         \t\n\
-        slli    t0, t0, 16                                                      \t\n\
+        slli    t0, t0, 20                                                      \t\n\
         csrr    a0, mhartid                                                     \t\n\
         mul     t0, t0, a0                                                      \t\n\
         sub     sp, sp, t0                                                      \t\n\
@@ -100,7 +100,7 @@ secondary:                                                                      
         # 32kB * hart ID is subtracted from the boot stack to avoid overlapping \t\n\
         la      sp, __boot_stack__                                              \t\n\
         li      t0, 0x1                                                         \t\n\
-        slli    t0, t0, 16                                                      \t\n\
+        slli    t0, t0, 20                                                      \t\n\
         csrr    a0, mhartid                                                     \t\n\
         mul     t0, t0, a0                                                      \t\n\
         sub     sp, sp, t0                                                      \t\n\
