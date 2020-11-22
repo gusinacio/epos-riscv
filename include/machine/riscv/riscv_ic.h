@@ -80,8 +80,7 @@ public:
         db<IC>(TRC) << "IC::enable()" << endl;
         // at beggining CLINT is already started, so we are only enabling all interrupts
         // this is done on MIE register
-        Reg32 flags = (1 << SUPERVISOR_SOFT_INT | 1 << MACHINE_SOFT_INT | 
-                       1 << SUPERVISOR_TIMER_INT | 1 << MACHINE_TIMER_INT );
+        Reg32 flags = (1 << MACHINE_SOFT_INT | 1 << MACHINE_TIMER_INT );
         ASM ("csrw mie, %0" : : "r"(flags) : );
     }
     static void enable(Interrupt_Id i) {
