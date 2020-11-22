@@ -3,7 +3,6 @@
         .file "rv32_crt0.S"
 
         # Entry point called by SETUP for processors
-        .option norvc
         .section .text
         .align  4
         .global _start
