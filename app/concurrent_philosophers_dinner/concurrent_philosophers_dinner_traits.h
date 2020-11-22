@@ -33,8 +33,8 @@ template<> struct Traits<Debug>: public Traits<Build>
 {
     static const bool error   = true;
     static const bool warning = true;
-    static const bool info    = true;
-    static const bool trace   = true;
+    static const bool info    = false;
+    static const bool trace   = false;
 };
 
 template<> struct Traits<Lists>: public Traits<Build>
@@ -115,7 +115,7 @@ template<> struct Traits<System>: public Traits<Build>
     static const unsigned long LIFE_SPAN = 1 * YEAR; // s
     static const unsigned int DUTY_CYCLE = 1000000; // ppm
 
-    static const bool reboot = true;
+    static const bool reboot = false;
 
     static const unsigned int STACK_SIZE = Traits<Machine>::STACK_SIZE;
     static const unsigned int HEAP_SIZE = (Traits<Application>::MAX_THREADS + 1) * Traits<Application>::STACK_SIZE;
