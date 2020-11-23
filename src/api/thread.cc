@@ -338,7 +338,8 @@ void Thread::reschedule()
     assert(locked()); // locking handled by caller
 
     // Promotes thread to the uper queue.
-    if(EQUAL<Criterion, Scheduling_Criteria::FS>::Result) {
+    if(EQUAL<Criterion, Scheduling_Criteria::FS>::Result ||
+        EQUAL<Criterion, Scheduling_Criteria::GFS>::Result) {
         // Checks maximum priority
         if (running()->_link.rank() > (MAIN+1))
             running()->_link.promote();
@@ -368,13 +369,14 @@ void Thread::rescheduler(IC::Interrupt_Id i)
 {
     lock();
 
-    // if(EQUAL<Criterion, Scheduling_Criteria::FS>::Result && running()->_link.rank() > MAIN) {
-    //     // Lowers thread rank
-    //     if (running()->_link.rank() >= (IDLE - 1))
-    //         running()->_link.demote();
-    //     else
-    //         running()->_link.demote(2);
-    // }
+    if((EQUAL<Criterion, Scheduling_Criteria::FS>::Result ||
+        EQUAL<Criterion, Scheduling_Criteria::GFS>::Result) && running()->_link.rank() > MAIN) {
+        // Lowers thread rank
+        if (running()->_link.rank() >= (IDLE - 1))
+            running()->_link.demote();
+        else
+            running()->_link.demote(2);
+    }
 
     reschedule();
 
