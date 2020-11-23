@@ -1,4 +1,4 @@
-# P2 - EPOS
+# P3 - EPOS
 
 ## Installing
 
@@ -8,34 +8,34 @@ After that, it is important to check in ```makedefs``` the PATH for your compile
 
 ## Testing
 
-Go into the directory where you extracted EPOS and issue a ```make all``` to have instances of EPOS built for each of the applications in the ```app``` directory to build the intended tests for this delivery (P2). 
+Go into the directory where you extracted EPOS and issue a ```make all``` to have instances of EPOS built for each of the applications in the ```app``` directory to build the intended tests for this delivery (P3). 
 
 ## Running
 
-After building an application-oriented instance of EPOS, you can run the application with the tailored EPOS on QEMU using: ```make APPLICATION=<app> run```. The prepared tests are run with ```make APPLICATION=alarm_test run``` for alarms and delays evaluation, and ```make APPLICATION=time_preemptive run``` to test the implemented scheduler. The applications run in an instance of QEMU, SiFive-E RISC-V machine.
+After building an application-oriented instance of EPOS, you can run the application with the tailored EPOS on QEMU using: ```make APPLICATION=<app> run```. The prepared tests are run with ```make APPLICATION=concurrent_philosofers_dinner run``` for atomics operations and valuation, and ```make APPLICATION=time_preemptive run``` to test the implemented scheduler in multicore. The applications run in an instance of QEMU, SiFive-E RISC-V machine.
 
 ## Tests done
 
 -------------------------------------------------------
-### Timers Initialization and Configuration
-The timers were set to work with two different channels (Alarm and Scheduler), and configured with their respective handlers. The timers use the MTIME and MTIMECMP registers to keep track of time_stamps and to launch timer interrupts. The correct configuration can be inferred in the subsequent tests since timers are the base for the other points evaluated in this delivery.
+### Multicore Initialization
+For the multicore initialization, all the cores start at the same entry point making a small initialization process, initializing their operation mode, the mtvec and enabling interrupts. After this initial process, all the harts except the core 0 will issue a ```wfi```, waiting for an interrupt to be waken, while the core 0 proceeds with the normal system initialization. In an opportune moment, the core 0 wakes up all the other cores issuing an IPI and all the other cores proceed with the initialization in the same way. This can be checked by the test app initialization itself, that uses 4 cores to successfully execute.
 
 -------------------------------------------------------
-### Timer Handler
-The timer handler calls again config() for setting MTIME and MTIMECMP registers and keeps triggering interruptions. The handler also calls the scheduler and alarms handlers.
+### Atomic Operations
+We implemented the ```tls```, ```finc```, ```fdec``` and ```cas``` operations in CPU using the atomic instructions in risc-v ```sc.w``` and ```lr.w```.
 
 -------------------------------------------------------
-### Alarms Configuration
-To test the alarms functioning we used the available alarm_test already implemented in EPOS source tree. It programs two distinct alarms and a delay, and alternates the handlers execution according to the programmed time.
+### Timers configuration / Interrupt Handling
+Each core has its own counter and uses offsets of 8 for every core in the mtime.
 
 -------------------------------------------------------
-### Interrupts Handling
-For handling the interruptions, we used the mtvec for setting the address of `_int_entry`. It saves all registers, and calls the exception_handler. If the mcauses says that it is an interruption it calls the handler for the given interruption_id, else, it calls PANIC() because it is an untreated exception.
+### IPI
+These are inter-processor interrupts, and can be done first enabling the interrupt id[3] and every time we write in the CLINT core offset, we create an interruption which can be used to synchronize the cores in a given point of code and create interruptions for each other.
 
 -------------------------------------------------------
-### Time Preemptive Scheduler
-The Scheduling algorithm implemented for this delivery was the Feedback Scheduling (FS) algorithm. It consists in a dynamic, time-preemptive algorithm that uses the idea of multiple queues to realize the scheduling. In our implementation we simulated the multiple queues as different priorities, where greater priority threads execute first, and threads with the same priority are scheduled in a Round-Robin manner. It is a dynamic algorithm, where the dynamic change is given by the thread behavior: CPU-Bound threads that consume their QUANTUMs tend to decrease their priority and go to lower queues, while IO-Bound threads that use only a part of their QUANTUM go up. These changes are made using a Priority based Scheduling Criteria and updates using demote/promote to adjust the priorities.
-In the ```time_preemptive``` application, we create three distinct threads: A and B that simulate CPU-Bound threads and only execute a while(true) loop; and C
-that simulates an IO-Bound thread and calls a Delay to be awaken by an Alarm on each execution.
-<Describe problem with threads scheduling>
+### Global Multicore Scheduling
+The Global Multicore Scheduler implemented is a multicore version of the previously implemented Feedback Scheduling (FS). This global multicore version (GFS) is based in the Multihead Scheduling List implemented in EPOS, that represents a single scheduling list with multiple heads (one for each core), and its functioning can be seen in the test application.
+It is important to note that in some executions the test may freeze, but in most cases it successfully completes.
+
+
 
