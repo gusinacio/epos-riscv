@@ -13,14 +13,11 @@ struct Memory_Map
 {
     // Physical Memory
     enum {
-        UART_BASE                   = 0x10000000, // UART
-        TIMER_BASE                  = 0x02004000,
-        GPIOA_BASE                  = 0x03000000,
-        RTC_BASE                    = 0x00101000,
+        UART_BASE                   = 0x10000000, // 16550A NS UART
+        TIMER_BASE                  = 0x02004000, // CLINT
+        RTC_BASE                    = 0x00101000, // goldfish_rtc
 
-        CLINT_BASE                  = 0x02000000,
-        PLIIC_CPU_BASE              = 0x0C000000,
-        PRIVATE_TIMER_BASE          = 0x0000bff8
+        CLINT_BASE                  = 0x02000000, // Sifive CLINT
     };
 
     // Physical Memory

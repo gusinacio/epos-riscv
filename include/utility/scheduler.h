@@ -150,6 +150,17 @@ namespace Scheduling_Criteria
         static volatile unsigned int _next_queue;
     };
 
+    // Feedback Scheduling
+    class GFS: public FS
+    {
+    public:
+        static const unsigned int HEADS = Traits<Machine>::CPUS;
+
+        GFS(int p = NORMAL): FS(p) {}
+
+        static unsigned int current_head() { return CPU::id(); }
+    };
+
     // Global Round-Robin
     class GRR: public RR
     {
@@ -321,6 +332,10 @@ class Scheduling_Queue: public Scheduling_List<T> {};
 
 template<typename T>
 class Scheduling_Queue<T, Scheduling_Criteria::GRR>:
+public Multihead_Scheduling_List<T> {};
+
+template<typename T>
+class Scheduling_Queue<T, Scheduling_Criteria::GFS>:
 public Multihead_Scheduling_List<T> {};
 
 template<typename T>

@@ -7,7 +7,7 @@
 
 __BEGIN_SYS
 
-class CPU : protected CPU_Common
+class CPU: protected CPU_Common
 {
     friend class Init_System;
     friend class Machine;
@@ -17,67 +17,61 @@ private:
 
 public:
     // CPU Native Data Types
+    using CPU_Common::Reg8;
     using CPU_Common::Reg16;
     using CPU_Common::Reg32;
     using CPU_Common::Reg64;
-    using CPU_Common::Reg8;
     using Reg = CPU_Common::Reg32;
     using Log_Addr = CPU_Common::Log_Addr<Reg>;
     using Phy_Addr = CPU_Common::Phy_Addr<Reg>;
 
-    enum
-    {
-        FLAG_MIE = 1 << 3,   // Machine Interrupts Enabled
-        FLAG_SIE = 1 << 1,   // Supervisor Interrupts Enabled
-        FLAG_SPIE = 1 << 5,  // Supervisor Previous Interrupts Enabled
-        FLAG_MPIE = 1 << 7,  // Machine Previous Interrupts Enabled
-        FLAG_MPP = 3 << 11,  // Machine Previous Privilege
-        FLAG_SPP = 3 << 12,  // Supervisor Previous Privilege
-        FLAG_MPRV = 1 << 17, // Memory Priviledge
-        FLAG_TVM = 1 << 20,  // Trap Virtual Memory //not allow MMU
-        MSTATUS_DEFAULTS = (FLAG_MIE | FLAG_SPP | FLAG_MPIE | FLAG_SPIE | FLAG_MPP | FLAG_SIE)
+    // Control and Status Register (mstatus)
+    enum {
+        FLAG_MIE            = 1 << 3,      // Machine Interrupts Enabled
+        FLAG_SIE            = 1 << 1,      // Supervisor Interrupts Enabled
+        FLAG_SPIE           = 1 << 5,      // Supervisor Previous Interrupts Enabled
+        FLAG_MPIE           = 1 << 7,      // Machine Previous Interrupts Enabled
+        FLAG_MPP            = 3 << 11,     // Machine Previous Privilege
+        FLAG_SPP            = 3 << 12,     // Supervisor Previous Privilege
+        FLAG_MPRV           = 1 << 17,     // Memory Priviledge
+        FLAG_TVM            = 1 << 20,     // Trap Virtual Memory //not allow MMU
+        MSTATUS_DEFAULTS    = (FLAG_MIE | FLAG_MPIE | FLAG_MPP)
     };
 
     // Interrupt Enable Register (mie)
-    enum
-    {
-        FLAG_SSIE = 1 << 1,  // Supervisor Software Interrupt Enable
-        FLAG_MSIE = 1 << 3,  // Machine Software Interrupt Enable
-        FLAG_STIE = 1 << 5,  // Supervisor Software Interrupt Enable
-        FLAG_MTIE = 1 << 7,  // Machine Software Interrupt Enable
-        FLAG_SEIE = 1 << 9,  // Supervisor External Interrupt Enable
-        FLAG_MEIE = 1 << 11, // Machine External Interrupt Enable
-        MIE_DEFAULTS = (FLAG_MSIE | FLAG_MTIE)
+    enum {
+        FLAG_SSIE       = 1 << 1,   // Supervisor Software Interrupt Enable
+        FLAG_MSIE       = 1 << 3,   // Machine Software Interrupt Enable
+        FLAG_STIE       = 1 << 5,   // Supervisor Software Interrupt Enable
+        FLAG_MTIE       = 1 << 7,   // Machine Software Interrupt Enable
+        FLAG_SEIE       = 1 << 9,   // Supervisor External Interrupt Enable
+        FLAG_MEIE       = 1 << 11,  // Machine External Interrupt Enable
+        MIE_DEFAULTS    = (FLAG_MSIE | FLAG_MTIE | FLAG_MEIE)
     };
 
     // CPU Context
     class Context
     {
     public:
-        Context(const Log_Addr & entry, const Log_Addr & exit): _x1(exit), _x5(0), _x6(0),
-        _x7(0), _x8(0), _x9(0), _x10(0), _x11(0), _x12(0), _x13(0), _x14(0),
-        _x15(0), _x16(0), _x17(0), _x18(0), _x19(0), _x20(0), _x21(0), _x22(0),
-        _x23(0), _x24(0), _x25(0), _x26(0), _x27(0), _x28(0), _x29(0), _x30(0),
-        _x31(0), _pc(entry) {}
+        Context(const Log_Addr & entry, const Log_Addr & exit): _x1(exit), _pc(entry) {}
 
         void save() volatile  __attribute__ ((naked));
         void load() const volatile;
 
         friend Debug & operator<<(Debug & db, const Context & c) {
             db << hex
-               << "{x1="  << c._x1
-               << ",x5="  << c._x5
-               << ",x6="  << c._x6
-               << ",x7="  << c._x7
-               << ",x8="  << c._x8
-               << ",x9="  << c._x9
+               << "{x5="   << c._x5
+               << ",x6="   << c._x6
+               << ",x7="   << c._x7
+               << ",x8="   << c._x8
+               << ",x9="   << c._x9
                << ",x10="  << c._x10
                << ",x11="  << c._x11
                << ",x12="  << c._x12
                << ",x13="  << c._x13
-               << ",x14=" << c._x14
-               << ",x15=" << c._x15
-               << ",x16=" << c._x16
+               << ",x14="  << c._x14
+               << ",x15="  << c._x15
+               << ",x16="  << c._x16
                << ",x17="  << c._x17
                << ",x18="  << c._x18
                << ",x19="  << c._x19
@@ -87,171 +81,158 @@ public:
                << ",x23="  << c._x23
                << ",x24="  << c._x24
                << ",x25="  << c._x25
-               << ",x26=" << c._x26
-               << ",x27=" << c._x27
-               << ",x28=" << c._x28
-               << ",x29=" << c._x29
-               << ",x30=" << c._x30
-               << ",x31=" << c._x31
+               << ",x26="  << c._x26
+               << ",x27="  << c._x27
+               << ",x28="  << c._x28
+               << ",x29="  << c._x29
+               << ",x30="  << c._x30
+               << ",x31="  << c._x31
                << ",sp="  << &c
+               << ",lr="  << c._x1
                << ",pc="  << c._pc
                << "}" << dec;
             return db;
         }
 
     public:
-        Reg32 _x1; // return address
-        Reg32 _x5; // general-purpose registers (x5-31)
-        Reg32 _x6;
-        Reg32 _x7;
-        Reg32 _x8;
-        Reg32 _x9;
-        Reg32 _x10;
-        Reg32 _x11;
-        Reg32 _x12;
-        Reg32 _x13;
-        Reg32 _x14;
-        Reg32 _x15;
-        Reg32 _x16;
-        Reg32 _x17;
-        Reg32 _x18;
-        Reg32 _x19;
-        Reg32 _x20;
-        Reg32 _x21;
-        Reg32 _x22;
-        Reg32 _x23;
-        Reg32 _x24;
-        Reg32 _x25;
-        Reg32 _x26;
-        Reg32 _x27;
-        Reg32 _x28;
-        Reg32 _x29;
-        Reg32 _x30;
-        Reg32 _x31;
-        Reg32 _pc; // instruction pointer
+        Reg32  _x1; // ABI Link Register (return address)
+        Reg32  _x5; // t0
+        Reg32  _x6; // t1
+        Reg32  _x7; // t2
+        Reg32  _x8; // s0
+        Reg32  _x9; // s1
+        Reg32 _x10; // a0
+        Reg32 _x11; // a1
+        Reg32 _x12; // a2
+        Reg32 _x13; // a3
+        Reg32 _x14; // a4
+        Reg32 _x15; // a5
+        Reg32 _x16; // a6
+        Reg32 _x17; // a7
+        Reg32 _x18; // s2
+        Reg32 _x19; // s3
+        Reg32 _x20; // s4
+        Reg32 _x21; // s5
+        Reg32 _x22; // s6
+        Reg32 _x23; // s7
+        Reg32 _x24; // s8
+        Reg32 _x25; // s9
+        Reg32 _x26; // s10
+        Reg32 _x27; // s11
+        Reg32 _x28; // t3
+        Reg32 _x29; // t4
+        Reg32 _x30; // t5
+        Reg32 _x31; // t6
+     // Reg32  _x4; // ABI Thread Pointer, not used in EPOS
+     // Reg32  _x3; // ABI Global Pointer, managed by the linker
+     // Reg32  _x2; // ABI Stack Pointer, saved as this
+     // Reg32  _x0; // zero
+        Reg32 _pc;
     };
 
     // Interrupt Service Routines
-    typedef void(ISR)();
+    typedef void (ISR)();
 
     // Fault Service Routines (exception handlers)
-    typedef void(FSR)();
+    typedef void (FSR)();
 
 public:
-    CPU(){};
+    CPU() {};
 
 public:
     // Register access
-    static Reg32 sp()
-    {
+    static Reg32 sp() {
         Reg32 value;
-        ASM("mv %0, sp"
-            : "=r"(value)
-            :);
+        ASM("mv %0, sp" : "=r"(value) :);
         return value;
     }
-
-    static void sp(const Reg32 &sp)
-    {
-        ASM("mv sp, %0"
-            :
-            : "r"(sp)
-            :);
+    static void sp(const Reg32 & sp) {
+        ASM("mv sp, %0" : : "r"(sp) :);
     }
 
-    static Reg32 fr()
-    {
+    static Reg32 fr() {
         Reg32 value;
-        ASM("mv %0, x10"
-            : "=r"(value)); // x10 is a0
+        ASM("mv %0, x10" : "=r"(value)); // x10 is a0
         return value;
     }
-
-    static void fr(const Reg32 &fr)
-    {
-        ASM("mv x10, %0"
-            :
-            : "r"(fr)
-            :); // x10 is a0
+    static void fr(const Reg32 & fr) {
+        ASM("mv x10, %0" : : "r"(fr) :); // x10 is a0
     }
 
-    static Log_Addr ip()
-    {
+    static Log_Addr ip() {
         Reg32 value;
-        ASM("mv %0, pc"
-            : "=r"(value)
-            :);
+        ASM("mv %0, pc" : "=r"(value) :);
         return value;
     }
 
     static Reg32 pdp() { return 0; }
-    static void pdp(const Reg32 &pdp) {}
+    static void pdp(const Reg32 & pdp) {}
+
 
     // Atomic operations
 
-    using CPU_Common::tsl;
-    /*
-    template<typename T>
+    // using CPU_Common::tsl; // IMPLEMENT
+    // using CPU_Common::finc; // IMPLEMENT
+    // using CPU_Common::fdec; // IMPLEMENT
+    // using CPU_Common::cas; // IMPLEMENT
+
+    template <typename T>
     static T tsl(volatile T & lock) {
-        // TODO implement
+        register T old;
+        register T one = 1;
+        ASM("1: lr.w    %0, (%1)        \n"
+            "   sc.w    t3, %2, (%1)    \n"
+            "   bnez    t3, 1b          \n" : "=&r"(old) : "r"(&lock), "r"(one) : "t3", "cc", "memory");
+        return old;
     }
-    */
 
-    using CPU_Common::finc;
-    /*
-    template<typename T>
+    template <typename T>
     static T finc(volatile T & value) {
-        // TODO implement
+        register T old;
+        ASM("1: lr.w    %0, (%1)        \n"
+            "   addi    %0, %0, 1       \n"
+            "   sc.w    t3, %0, (%1)    \n"
+            "   bnez    t3, 1b          \n" : "=&r"(old) : "r"(&value) : "t3", "cc", "memory");
+        return (old - 1);
     }
-    */
 
-    using CPU_Common::fdec;
-    /*
-    template<typename T>
+    template <typename T>
     static T fdec(volatile T & value) {
-        // TODO implement
+        register T old;
+        ASM("1: lr.w    %0, (%1)        \n"
+            "   addi    %0, %0, -1      \n"
+            "   sc.w    t3, %0, (%1)    \n"
+            "   bnez    t3, 1b          \n" : "=&r"(old) : "r"(&value) : "t3", "cc", "memory");
+        return old + 1;
     }
-    */
 
-    using CPU_Common::cas;
-    /*
     template <typename T>
     static T cas(volatile T & value, T compare, T replacement) {
-        // TODO implement
+        register T old;
+        ASM("1: lr.w    %0, (%1)        \n"
+            "   bne     %0, %2, 2f      \n"
+            "   sc.w    t3, %3, (%1)    \n"
+            "   bnez    t3, 1b          \n"
+            "2:                         \n" : "=&r"(old) : "r"(&value), "r"(compare), "r"(replacement) : "t3", "cc", "memory");
+        return old;
     }
-    */
 
     // Power modes
-    static void halt()
-    {
-        ASM("wfi");
-    }
+    static void halt() { ASM("wfi"); }
 
-    static unsigned int id()
-    {
+    static unsigned int id() {
         int id;
-        ASM("csrr %0, mhartid"
-            : "=r"(id)
-            :
-            : "memory", "cc");
+        ASM("csrr %0, mhartid" : "=r"(id) : : "memory", "cc");
         return id & 0x3;
     }
 
-    static void mstatus(Reg value)
-    {
-        ASM("csrw mstatus, %0"
-            :
-            : "r"(value)
-            : "cc");
+    static void mstatus(Reg value) {
+        ASM("csrw mstatus, %0" : : "r"(value) : "cc");
     }
 
-    static Reg mstatus()
-    {
+    static Reg mstatus() {
         Reg value;
-        ASM("csrr %0, mstatus"
-            : "=r"(value)
-            :
-            :);
+        ASM("csrr %0, mstatus" : "=r"(value) : : );
         return value;
     }
 
@@ -265,8 +246,7 @@ public:
         return value;
     }
 
-    static unsigned int cores()
-    {
+    static unsigned int cores() {
         return Traits<Build>::CPUS;
     }
 
@@ -278,52 +258,44 @@ public:
     static bool int_enabled() { return (mie() & MIE_DEFAULTS) ; }
     static bool int_disabled() { return !int_enabled(); }
 
-    static void csrr31() { ASM("csrr x31, mstatus"
-                               :
-                               :
-                               : "x31"); }
-    static void csrw31() { ASM("csrw mstatus, x31"
-                               :
-                               :
-                               : "cc"); }
+    static void csrr31() { ASM("csrr x31, mstatus" : : : "x31"); }
+    static void csrw31() { ASM("csrw mstatus, x31" : : : "cc"); }
 
     static unsigned int int_id() { return 0; }
 
-    static void switch_context(Context **o, Context *n) __attribute__((naked));
+    static void switch_context(Context ** o, Context * n) __attribute__ ((naked));
 
-    template <typename... Tn>
-    static Context *init_stack(const Log_Addr &usp, Log_Addr sp, void (*exit)(), int (*entry)(Tn...), Tn... an)
-    {
+    template<typename ... Tn>
+    static Context * init_stack(const Log_Addr & usp, Log_Addr sp, void (* exit)(), int (* entry)(Tn ...), Tn ... an) {
         sp -= sizeof(Context);
-        Context *ctx = new (sp) Context(entry, exit);
-        init_stack_helper(&ctx->_x10, an...);
+        Context * ctx = new(sp) Context(entry, exit);
+        init_stack_helper(&ctx->_x10, an ...); // x10 is a0
         return ctx;
     }
-    template <typename... Tn>
-    static Log_Addr init_user_stack(Log_Addr sp, void (*exit)(), Tn... an)
-    {
+    template<typename ... Tn>
+    static Log_Addr init_user_stack(Log_Addr sp, void (* exit)(), Tn ... an) {
         sp -= sizeof(Context);
-        Context *ctx = new (sp) Context(0, exit);
-        init_stack_helper(&ctx->_x10, an...);
+        Context * ctx = new(sp) Context(0, exit);
+        init_stack_helper(&ctx->_x10, an ...); // x10 is a0
         return sp;
     }
 
-    static int syscall(void *message);
+    static int syscall(void * message);
     static void syscalled();
 
-    using CPU_Common::htole16;
-    using CPU_Common::htole32;
     using CPU_Common::htole64;
-    using CPU_Common::letoh16;
-    using CPU_Common::letoh32;
+    using CPU_Common::htole32;
+    using CPU_Common::htole16;
     using CPU_Common::letoh64;
+    using CPU_Common::letoh32;
+    using CPU_Common::letoh16;
 
-    using CPU_Common::betoh16;
-    using CPU_Common::betoh32;
-    using CPU_Common::betoh64;
-    using CPU_Common::htobe16;
-    using CPU_Common::htobe32;
     using CPU_Common::htobe64;
+    using CPU_Common::htobe32;
+    using CPU_Common::htobe16;
+    using CPU_Common::betoh64;
+    using CPU_Common::betoh32;
+    using CPU_Common::betoh16;
 
     using CPU_Common::htonl;
     using CPU_Common::htons;
@@ -331,11 +303,10 @@ public:
     using CPU_Common::ntohs;
 
 private:
-    template <typename Head, typename... Tail>
-    static void init_stack_helper(Log_Addr sp, Head head, Tail... tail)
-    {
+    template<typename Head, typename ... Tail>
+    static void init_stack_helper(Log_Addr sp, Head head, Tail ... tail) {
         *static_cast<Head *>(sp) = head;
-        init_stack_helper(sp + sizeof(Head), tail...);
+        init_stack_helper(sp + sizeof(Head), tail ...);
     }
     static void init_stack_helper(Log_Addr sp) {}
 

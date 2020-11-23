@@ -9,7 +9,7 @@ Thread *threads[3];
 
 int thread_test(int id, int time)
 {
-    cout << "Running thread " << id << "-> Configured Burst Time: " << time << endl;
+    cout << "Running thread " << id << " on core ["<< CPU::id() <<"] -> Configured Burst Time: " << time << endl;
     return 0;
 }
 
@@ -85,7 +85,7 @@ int main()
     cout << "MAIN(switch_context)=" << switch_context << endl;
     cout << endl;
 
-    cout << n++ << ". Corretude do escalonador SJF!" << endl;
+    cout << n++ << ". Corretude do escalonador GFS!" << endl;
     const int timing[] = {100, 50, 70};
     for (int i = 0; i < 3; i++)
         threads[i] = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(timing[i])), &thread_test, i + 1, timing[i]);

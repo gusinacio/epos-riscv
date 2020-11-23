@@ -21,7 +21,7 @@ int cpu_thread1() {
     cout << "CPU Thread 1 Working..." << endl;
     for(int i = 0; i < 10; i++) {
         int j = 0;
-        while(j++ < 100000000);
+        while(j++ < 1000000);
     }
     cout << "CPU Thread 1 Finished..." << endl;
     return 0;
@@ -29,9 +29,9 @@ int cpu_thread1() {
 
 int cpu_thread2() {
     cout << "CPU Thread 2 Working..." << endl;
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < 3; i++) {
         int j = 0;
-        while(j++ < 100000000);
+        while(j++ < 10000000);
     }
     cout << "CPU Thread 2 Finished..." << endl;
     return 0;

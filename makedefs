@@ -87,10 +87,11 @@ SYS_DATA_ADDR           = $(shell $(BIN)/eposcfg SYS_DATA 2> /dev/null)
 UUID                    = $(shell cat /proc/sys/kernel/random/uuid | sed 's/-//g')
 
 # Compiler prefixes
-ia32_COMP_PREFIX	:= /usr/bin/x86_64-linux-gnu-
+ia32_COMP_PREFIX	:= /usr/local/ia32/gcc-7.2.0/bin/ia32-
 armv7_COMP_PREFIX	:= /usr/bin/arm-none-eabi-
 armv8_COMP_PREFIX	:= /usr/bin/arm-none-eabi-
-rv32_COMP_PREFIX	:= /opt/riscv/bin/riscv32-unknown-linux-gnu-
+rv32_COMP_PREFIX	:= /usr/bin/riscv32/bin/riscv32-unknown-linux-gnu-
+rv64_COMP_PREFIX	:= /opt/riscv/bin/riscv64-unknown-linux-gnu-
 COMP_PREFIX		= $($(ARCH)_COMP_PREFIX)
 
 # Machine specifics
@@ -170,11 +171,11 @@ cortex_IMG_SUFFIX	:= .img
 endif
 
 ifeq ($(MMOD),sifive_e)
-riscv_CC_FLAGS          :=
+riscv_CC_FLAGS          := -Wl, -mno-relax
 riscv_AS_FLAGS          := 
-riscv_LD_FLAGS          := 
+riscv_LD_FLAGS          := --no-relax
 riscv_EMULATOR			= qemu-system-riscv32 -machine virt -smp $(CPUS) -m $(MEM_SIZE)k -serial mon:stdio -bios none -nographic -no-reboot -kernel 
-riscv_DEBUGGER          := riscv32-unknown-linux-gnu-gdb -tui
+riscv_DEBUGGER          := /usr/bin/riscv32/bin/riscv32-unknown-linux-gnu-gdb --tui
 riscv_FLASHER           := 
 riscv_MAGIC             := --nmagic
 riscv_CODE_NAME := .init
