@@ -150,7 +150,7 @@ namespace Scheduling_Criteria
         static volatile unsigned int _next_queue;
     };
 
-    // Feedback Scheduling
+    // Global Feedback Scheduling
     class GFS: public FS
     {
     public:
@@ -159,6 +159,22 @@ namespace Scheduling_Criteria
         GFS(int p = NORMAL): FS(p) {}
 
         static unsigned int current_head() { return CPU::id(); }
+    };
+
+    // Partitioned Feedback Scheduling
+    class PFS: public FS, public Variable_Queue
+    {
+    public:
+        static const unsigned int QUEUES = Traits<Machine>::CPUS;
+
+    public:
+        template <typename ... Tn>
+        PFS(int p = NORMAL, int cpu = ANY, Tn & ... an)
+        : FS(p), Variable_Queue(((_priority == IDLE) || (_priority == MAIN)) ? CPU::id() : (cpu != ANY) ? cpu : ++_next_queue %= CPU::cores()) {}
+
+        using Variable_Queue::queue;
+
+        static unsigned int current_queue() { return CPU::id(); }
     };
 
     // Global Round-Robin
@@ -337,6 +353,10 @@ public Multihead_Scheduling_List<T> {};
 template<typename T>
 class Scheduling_Queue<T, Scheduling_Criteria::GFS>:
 public Multihead_Scheduling_List<T> {};
+
+template<typename T>
+class Scheduling_Queue<T, Scheduling_Criteria::PFS>:
+public Scheduling_Multilist<T> {};
 
 template<typename T>
 class Scheduling_Queue<T, Scheduling_Criteria::CPU_Affinity>:

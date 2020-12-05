@@ -30,6 +30,7 @@ namespace Scheduling_Criteria
     class SJF;
     class FS;
     class GFS;
+    class PFS;
     class RR;
     class RM;
     class DM;
